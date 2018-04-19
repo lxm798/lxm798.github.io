@@ -26,7 +26,7 @@ list
 整数集合
 
 ## redis object 和数据结构的对应关系
-![](imgs/20180419-131337.png)
+![](https://raw.githubusercontent.com/lxm798/picbed/master/redis_data_struct.png)
 
 ## 快照(AOF & RDB)
 
