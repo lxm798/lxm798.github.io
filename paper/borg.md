@@ -32,3 +32,10 @@ borg有独立的容量系统为用户提供特殊的权限.例如管理员杀出
 
 ### Naming and monitoring
 每个task 内置HTTP server用于健康检查.borg 监控健康检查url,如果没有响应,borg 会重启应用.
+
+## borg 架构
+### borgmaster
+每个cell中的borgmaster包含两个部分:
+* borgmaster进程: 
+  处理rpc请求(创建job, 查询job,管理任何对象的状态机,和borglets通信,提供webui)
+* scheduler

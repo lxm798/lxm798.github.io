@@ -83,16 +83,16 @@ return ret;
 ## 源码分析
 spring 源码中处理aop 是将Advisor提前排序,然后递归调用
 ```java
-    protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
-        List<Advisor> candidateAdvisors = this.findCandidateAdvisors();
-        List<Advisor> eligibleAdvisors = this.findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
-        this.extendAdvisors(eligibleAdvisors);
-        if (!eligibleAdvisors.isEmpty()) {
-            eligibleAdvisors = this.sortAdvisors(eligibleAdvisors);
-        }
-
-        return eligibleAdvisors;
+protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
+    List<Advisor> candidateAdvisors = this.findCandidateAdvisors();
+    List<Advisor> eligibleAdvisors = this.findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
+    this.extendAdvisors(eligibleAdvisors);
+    if (!eligibleAdvisors.isEmpty()) {
+        eligibleAdvisors = this.sortAdvisors(eligibleAdvisors);
     }
+
+    return eligibleAdvisors;
+}
 ```
 前面两步返回有效的advisor,然后对advisor进行排序,排序实际按照优先级和Joinpoint的类型进行排序,优先级高的先执行:
 ```java
