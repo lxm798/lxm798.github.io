@@ -1,6 +1,13 @@
 # tcc-transaction 源码分析
-具体的参数说明与tcc-transaction-http-order 中传入参数一致
+
+## 总揽
+tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.
+tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.
+悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志. 
+通过定时任务扫描超时的事务,根据事务的状态确定是confirm还是cancel
+
 ## 处理
+具体的参数说明与tcc-transaction-http-order 中传入参数一致
 ConfigurableTransactionAspect
 ```java
 public void init() {

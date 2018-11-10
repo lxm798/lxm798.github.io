@@ -69,6 +69,9 @@ RDB:一个在某个时间点的snapshot
 
 （6）、volatile-ttl：回收有设置过期的键，尝试先回收离TTL最短时间的键，为新数据腾出空间。
 
+## 为什么是跳表
+https://www.zhihu.com/question/20202931
+
 ## 可能出现的内存暴增
 ### 读写缓冲区导致
 
