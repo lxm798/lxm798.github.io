@@ -1,11 +1,27 @@
-# ioc
+# ioc/Inversion of Control
 
 ## 引言
+ioc直译过来就是控制反转.那么这个反转是反转了什么呢?
+我们写代码的时候通常是我们的代码来调用javalib中的函数,但是如何让javalib中的函数调用我们的函数呢?这个就是控制反转.
+
+为了达到控制反转的目的,即让spring控制我们的代码,需要做什么呢?
+首先不能什么都不告诉spring,这样spring就完全无法了解我们的代码.所以就需要有协议,但是这个协议有谁定义呢?
+一定是由spring来定义,因为spring只是按照自己定义的一些协议/规则来处理代码,并不需要了解外部的代码,所以
+必须是spring来定义.
+为了减少对代码的侵入spring采用了注解和XML配置的方式来处理用户定义的代码:
+Controller,Service,PostConstruct,PlacerHodlerConfigure等.
+
+这些本质上都是按照设计模式原则来设计:
+* 依赖倒转: 这个是spring的核心,实现方式是DI
+* 接口隔离: Ioc不仅仅根据class注入bean,还会根据接口类型自动装备一个bean ??
+* 里氏替换: 对于实现了DataSource接口的工具,都可以用来作为DataSource的配置
+* 开闭原则: spring中的基本原则,对于扩展开放,对修改封闭.spring 大部分采用注入和组合的方式完成功能,比如对bean的postprocess,等 不要修改原有代码即可完成功能添加, 这可是建立在依赖倒转,里氏替换的基础上完成.
 ioc 本身是XXX.使用主要使用代理模式,工厂模式,模板方法.
 代理模式:对对象做一层基础封装,满足注入时的要
 工厂模式:通过工厂创建对象,避免用户手动添加对象
 模板方法:好莱坞发展,底层调用上层代码的一种方式,用户按照framework的协议实现方法,在注入后,framwork按照协议调用方法
 
+## 部分注解说明
 ## beanfactory
 beanfactory 作为ioc主要实现类,通过getBean 获取对象
 ```java
