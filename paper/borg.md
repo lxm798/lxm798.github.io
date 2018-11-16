@@ -39,3 +39,29 @@ borg有独立的容量系统为用户提供特殊的权限.例如管理员杀出
 * borgmaster进程: 
   处理rpc请求(创建job, 查询job,管理任何对象的状态机,和borglets通信,提供webui)
 * scheduler
+
+## 可用性
+大规模集群中的异常时很常见的.Borg中应用本身就会处理这些异常,常用手段包括,replication,持久化信息到到分布式文件系统,checkpoints.
+Borg也从基础功能层面来处理这些事情:
+* 在新机器上自动拉起进程
+* 任务部署尽可能离散,不同机房\机架\电源系统
+* 在系统\机器升级时保证job中同时运行的task的数量
+* 保持请求的幂等性
+* 对unreachable的任务的重新调度进行限速,因为大规模宕机和网络割裂无法区分
+* 避免重复的task::machine导致机器崩溃
+* 恢复本地磁盘中保存的关键信息
+
+borg的一个关键特点就是,即使borgmaster或者borglet宕机,task依然可以继续运行
+borg通过以下实践实现99.99的可用性:
+1. replication for machine failures/机器宕机时的复制
+2. admission control to avoid overload/过载控制
+3. deploying instances using simple, low-level tools to minimize external dependencies/减少部署依赖
+4. independent cell minimize the chance of correlated operator errors and failure propagation
+    /使用独立的cell隔离环境,避免雪崩
+## Utilization/利用率
+Borg的主要目标就是有效利用机器.
+
+### Evaluaction methodology
+
+
+## Isolation
