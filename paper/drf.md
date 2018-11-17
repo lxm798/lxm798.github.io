@@ -24,7 +24,22 @@ DRF 用来解决多资源类型多用户系统中，资源公平分配的问题�
 
  ## DRF
  用户所有占有率中的最大值称作用户的dominant share，与dominant share对应的资源被称作dominant resource
-
+```
+R = <r1; · · · ; rm> . total resource capacities
+C = <c1; · · · ; cm> . consumed resources, initially 0
+si (i = 1::n) . user i’s dominant shares, initially 0
+Ui = hui;1; · · · ; ui;mi (i = 1::n) . resources given to
+user i, initially 0
+pick user i with lowest dominant share si
+Di demand of user i’s next task
+if C + Di ≤ R then
+C = C + Di . update consumed vector
+Ui = Ui + Di . update i’s allocation vector
+si = maxm j=1fui;j=rjg
+else
+return . the cluster is full
+end if
+```
 ```cpp
 double DRFSorter::calculateShare(const Node* node) const
 {
@@ -41,7 +56,7 @@ double DRFSorter::calculateShare(const Node* node) const
     // 已经分配的资源包括需要遍历的资源类型
     if (scalar.value() > 0.0 &&
         node->allocation.totals.contains(resourceName)) {
-    // 已经分配的资源
+    // 已经分配的资源,可能是已经使用或者没有使用的资源
       const double allocation =
         node->allocation.totals.at(resourceName).value();
     // 当前占比最大的资源类型
