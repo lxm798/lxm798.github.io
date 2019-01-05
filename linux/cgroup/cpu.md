@@ -334,5 +334,58 @@ struct task_group {
 };
 
 ```
+```c
+struct cgroup_subsys_state {
+    /*  
+     * The cgroup that this subsystem is attached to. Useful
+     * for subsystems that want to know about the cgroup
+     * hierarchy structure
+     */
+    struct cgroup *cgroup;
+ 
+    /*  
+     * State maintained by the cgroup system to allow subsystems
+     * to be "busy". Should be accessed via css_get(),
+     * css_tryget() and and css_put().
+     */
+ 
+    atomic_t refcnt;
+ 
+    unsigned long flags;
+    /* ID for this css, if possible */
+    struct css_id __rcu *id;
+};
+```
+```c
+struct sched_entity {
+	struct load_weight	load;		/* for load-balancing */
+	struct rb_node		run_node;
+	struct list_head	group_node;
+	unsigned int		on_rq;
 
+	u64			exec_start;
+	u64			sum_exec_runtime;
+	u64			vruntime;
+	u64			prev_sum_exec_runtime;
+
+	u64			nr_migrations;
+
+#ifdef CONFIG_SCHEDSTATS
+	struct sched_statistics statistics;
+#endif
+
+#ifdef CONFIG_FAIR_GROUP_SCHED
+//当前调度单元归属于某个父调度单元
+	struct sched_entity	*parent;
+	/* rq on which this entity is (to be) queued: */
+//当前调度单元归属的父调度单元的调度队列，即当前调度单元插入的队列
+	struct cfs_rq		*cfs_rq;
+	/* rq "owned" by this entity/group: */
+//当前调度单元的调度队列，即管理子调度单元的队列，如果调度单元是task_group，my_q才会有值
+//如果当前调度单元是task，那么my_q自然为NULL
+	struct cfs_rq		*my_q;
+#endif
+	void *suse_kabi_padding;
+};
+```
 https://ggaaooppeenngg.github.io/zh-CN/2017/05/07/cgroups-%E5%88%86%E6%9E%90%E4%B9%8B%E5%86%85%E5%AD%98%E5%92%8CCPU/

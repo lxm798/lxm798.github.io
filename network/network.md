@@ -42,25 +42,35 @@ vim /etc/security/limits.conf
 
 #表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭
 net.ipv4.tcp_syncookies = 1
+
 #表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭
 net.ipv4.tcp_tw_reuse = 1
+
 #表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭
 net.ipv4.tcp_tw_recycle = 1
+
 #表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间
 net.ipv4.tcp_fin_timeout=30
+
 #该参数设置系统的TIME_WAIT的数量，如果超过默认值则会被立即清除
 net.ipv4.tcp_max_tw_buckets = 20000
+
 #定义了系统中每一个端口最大的监听队列的长度，这是个全局的参数
 net.core.somaxconn = 65535
+
 #对于还未获得对方确认的连接请求，可保存在队列中的最大数目
 net.ipv4.tcp_max_syn_backlog = 262144
+
 #在每个网络接口接收数据包的速率比内核处理这些包的速率快时，允许送到队列的数据包的最大数目
 net.core.netdev_max_backlog = 30000
+
 #能够更快地回收TIME-WAIT套接字。此选项会导致处于NAT网络的客户端超时，建议为0
 net.ipv4.tcp_tw_recycle = 0
+
 #系统所有进程一共可以打开的文件数量
 fs.file-max = 6815744
-# 单个进程可以打开的文件数目
+
+#单个进程可以打开的文件数目
 fs.nr_open
 
 net.ipv4.tcp_tw_reuse = 1
@@ -76,6 +86,25 @@ kernel从2.6.21之前不支持多队列特性，一个网卡只能申请一个�
 这样，CPU的各个核可以并发的收包，就不会应为一个核不能满足需求，导致网络IO性能下降。
 ![](./pic/multi_queue.gif)
 
+### tcp fast open
+* 内核版本 3.7.0
+*也就是说，第一次TCP连接只是交换cookie信息，无法在SYN包中携带数据。在第一次交换之后，接下来的TCP连接就可以在SYN中携带数据了。流程如下：
+
+1. 客户端发送一个SYN包，这个包比较特殊，因为它携带应用数据和cookie；
+
+2. 服务器验证这个cookie，如果合法，服务器发送一个SYN＋ACK，这个ACK同时确认SYN和数据。然后数据被传递到应用进程；在连接完成之前server可以给client发送响应数据，携带的数据量受到TCP拥塞控制的限制(RFC5681，后面文章会介绍拥塞控制)。
+
+    如果不合法，服务器丢弃数据，发送一个SYN＋ACK，这个ACK只确认SYN，接下来走三次握手的普通流程；
+
+3. 如果验证合法（接收了SYN包中的数据），服务器在接收到客户端的第一个ACK前可以发送其它响应数据；
+
+4. 如果验证不合法（客户端在SYN中带的数据没被确认），客户端发送ACK确认服务器的SYN；并且，数据会在ACK包中重传；
+
+5. 下面的流程与普通的TCP交互流程无异
+ 
+## 选项
+reuseaddr : 可以复用time_wait的地址
+reuseport : 端口可以被复用
 ## udp
 包流
 
@@ -83,4 +112,5 @@ kernel从2.6.21之前不支持多队列特性，一个网卡只能申请一个�
 
 
 https://blog.csdn.net/turkeyzhou/article/details/7528182
+https://blog.csdn.net/for_tech/article/details/54237556 
 

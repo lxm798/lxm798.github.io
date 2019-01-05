@@ -1,0 +1,76 @@
+Intel(R)Xeon(R)E5-2650v3@2.30GHz
+2 physical core
+40 thread
+每个cpu中10个core
+每个core 2个超线程
+Intel(R)Xeon(R)E5-2650v3@2.30GHz
+内存2133
+机械磁盘
+
+                 L M B E N C H  3 . 0   S U M M A R Y
+                 ------------------------------------
+		 (Alpha software, do not distribute)
+
+
+Processor, Processes - times in microseconds - smaller is better
+------------------------------------------------------------------------------
+Host                 OS  Mhz null null      open slct sig  sig  fork exec sh  
+                             call  I/O stat clos TCP  inst hndl proc proc proc
+--------- ------------- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+yabeabdcd Linux 3.16.0- 2599 0.06 0.17 0.57 1.29 6.01 0.17 1.05 178. 431. 941.
+
+Basic integer operations - times in nanoseconds - smaller is better
+-------------------------------------------------------------------
+Host                 OS  intgr intgr  intgr  intgr  intgr  
+                          bit   add    mul    div    mod   
+--------- ------------- ------ ------ ------ ------ ------ 
+yabeabdcd Linux 3.16.0- 0.3900 0.0400 1.1900 9.0800   10.1
+
+Basic float operations - times in nanoseconds - smaller is better
+-----------------------------------------------------------------
+Host                 OS  float  float  float  float
+                         add    mul    div    bogo
+--------- ------------- ------ ------ ------ ------ 
+yabeabdcd Linux 3.16.0- 1.1600 1.9200 5.0700 2.7400
+
+Basic double operations - times in nanoseconds - smaller is better
+------------------------------------------------------------------
+Host                 OS  double double double double
+                         add    mul    div    bogo
+--------- ------------- ------  ------ ------ ------ 
+yabeabdcd Linux 3.16.0- 1.1500 1.9200 7.7400 5.4100
+
+Context switching - times in microseconds - smaller is better
+-------------------------------------------------------------------------
+Host                 OS  2p/0K 2p/16K 2p/64K 8p/16K 8p/64K 16p/16K 16p/64K
+                         ctxsw  ctxsw  ctxsw ctxsw  ctxsw   ctxsw   ctxsw
+--------- ------------- ------ ------ ------ ------ ------ ------- -------
+yabeabdcd Linux 3.16.0- 1.7800 1.7700 1.7300 2.2400 2.3600 2.24000 2.64000
+
+*Local* Communication latencies in microseconds - smaller is better
+---------------------------------------------------------------------
+Host                 OS 2p/0K  Pipe AF     UDP  RPC/   TCP  RPC/ TCP
+                        ctxsw       UNIX         UDP         TCP conn
+--------- ------------- ----- ----- ---- ----- ----- ----- ----- ----
+yabeabdcd Linux 3.16.0- 1.780 3.560 5.10  10.0        12.7        25.
+
+File & VM system latencies in microseconds - smaller is better
+-------------------------------------------------------------------------------
+Host                 OS   0K File      10K File     Mmap    Prot   Page   100fd
+                        Create Delete Create Delete Latency Fault  Fault  selct
+--------- ------------- ------ ------ ------ ------ ------- ----- ------- -----
+yabeabdcd Linux 3.16.0- 8.2645 6.6304   16.9 9.4245  8560.0 0.335 0.50560 1.624
+
+*Local* Communication bandwidths in MB/s - bigger is better
+-----------------------------------------------------------------------------
+Host                OS  Pipe AF    TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+                             UNIX      reread reread (libc) (hand) read write
+--------- ------------- ---- ---- ---- ------ ------ ------ ------ ---- -----
+yabeabdcd Linux 3.16.0- 3060 7204 4252 4018.5 6750.0 6755.5 4508.0 8729 6016.
+
+Memory latencies in nanoseconds - smaller is better
+    (WARNING - may not be correct, check graphs)
+------------------------------------------------------------------------------
+Host                 OS   Mhz   L1 $   L2 $    Main mem    Rand mem    Guesses
+--------- -------------   ---   ----   ----    --------    --------    -------
+yabeabdcd Linux 3.16.0-  2599 1.5400 7.7460   22.7       103.6

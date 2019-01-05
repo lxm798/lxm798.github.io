@@ -65,3 +65,6 @@ Borg的主要目标就是有效利用机器.
 
 
 ## Isolation
+
+## Related work
+关注大规模集群调度

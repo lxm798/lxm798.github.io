@@ -1,6 +1,7 @@
 # pthread_mutex
-##  初始化
 pthread_mutex_lock 在非多线程环境中默认直接返回0
+##  初始化
+
 ```c
 #define FORWARD2(name, rettype, decl, params, defaction) \
 rettype                                       \        
