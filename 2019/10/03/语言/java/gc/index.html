@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Gc内存区域 程序计数器 :当前线程所执行的字节码的行号指示器 JAVA堆 : Eden, From Survivor, To Survivor, TLB 虚拟机栈:线程私有,生命周期和线程相同. 本地方法栈: 方法区 运行时常量池 直接内存/堆外内存:NIO Buffer  分代信息 Eden/young old survive 永久代 code  GC 算法过程标记-清除产生大量的不连续的内存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lxm798">
+<meta property="og:url" content="http://yoursite.com/2019/10/03/语言/java/gc/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="Gc内存区域 程序计数器 :当前线程所执行的字节码的行号指示器 JAVA堆 : Eden, From Survivor, To Survivor, TLB 虚拟机栈:线程私有,生命周期和线程相同. 本地方法栈: 方法区 运行时常量池 直接内存/堆外内存:NIO Buffer  分代信息 Eden/young old survive 永久代 code  GC 算法过程标记-清除产生大量的不连续的内存">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-03T15:15:07.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lxm798">
+<meta name="twitter:description" content="Gc内存区域 程序计数器 :当前线程所执行的字节码的行号指示器 JAVA堆 : Eden, From Survivor, To Survivor, TLB 虚拟机栈:线程私有,生命周期和线程相同. 本地方法栈: 方法区 运行时常量池 直接内存/堆外内存:NIO Buffer  分代信息 Eden/young old survive 永久代 code  GC 算法过程标记-清除产生大量的不连续的内存">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/03/语言/java/gc/">
+
+
+
+
+
+  <title> | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/03/语言/java/gc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-03T23:15:07+08:00">
+                2019-10-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Gc"><a href="#Gc" class="headerlink" title="Gc"></a>Gc</h1><h2 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h2><ul>
+<li>程序计数器 :当前线程所执行的字节码的行号指示器</li>
+<li>JAVA堆 : Eden, From Survivor, To Survivor, TLB</li>
+<li>虚拟机栈:线程私有,生命周期和线程相同.</li>
+<li>本地方法栈:</li>
+<li>方法区</li>
+<li>运行时常量池</li>
+<li>直接内存/堆外内存:NIO Buffer</li>
+</ul>
+<h2 id="分代信息"><a href="#分代信息" class="headerlink" title="分代信息"></a>分代信息</h2><ul>
+<li>Eden/young</li>
+<li>old</li>
+<li>survive</li>
+<li>永久代</li>
+<li>code</li>
+</ul>
+<h2 id="GC-算法"><a href="#GC-算法" class="headerlink" title="GC 算法"></a>GC 算法</h2><h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h3><h4 id="标记-清除"><a href="#标记-清除" class="headerlink" title="标记-清除"></a>标记-清除</h4><p>产生大量的不连续的内存碎片</p>
+<h4 id="标记-整理"><a href="#标记-整理" class="headerlink" title="标记-整理"></a>标记-整理</h4><p>将清理的数据都向一端移动</p>
+<h4 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h4><p>将内存划分为相等的两块, Eden-&gt;Survivor</p>
+<h4 id="分代收集"><a href="#分代收集" class="headerlink" title="分代收集"></a>分代收集</h4><p>对前面的方案进行组合,新生代,有担保,复制,老年代,没有担保,标记-整理</p>
+<p>GCROOT的枚举一定会发生STW, 使用OopMap记录GCROOT</p>
+<h3 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h3><p>Serial : 单线程,复制,简单高效, 老年代标记整理<br>Parallel Scavenge: 复制算法,可控制的吞吐量<br>ParNew: Serial 的多线程版本, 唯一和CMS配合,新生代复制,老年代标记整理, -XX:ParallelGCThreads<br>G1:</p>
+<h3 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h3><p>SerialOld: 标记-整理,搭配Parallel-Scavenge或者作为CMS的后备<br>Parallel old:Parallel Scavenge的老年代版本,标记整理,只能和Parallel Scavenge 搭配<br>Cms:</p>
+<p>  最短停顿为目标,标记-清除,初始标记(STW,GCRoots能直接关联到的对象)-&gt;并发标记(GCROOT TRACING)-&gt;重新标记(STW,新增GCROOT)-&gt;并发清除</p>
+<p>  碎片的问题可以有两种方案解决: full gc, 强制开启碎片整理</p>
+<p>  浮动垃圾:在并发清理阶段产生的垃圾</p>
+<p>  参数: -XXCMSInitiatingOccupancyFraction 老年代空间使用达到一定比例触发垃圾回收<br>G1:<br>  初始标记-&gt;并发标记-&gt;最终标记-&gt;筛选回收(优先回收价值对打的Region)</p>
+<h2 id="内存分配策略"><a href="#内存分配策略" class="headerlink" title="内存分配策略"></a>内存分配策略</h2><ul>
+<li>优先分配Eden</li>
+<li>大对象直接进入老年代 -XX:PretenureSizeThreshold</li>
+<li>长期存活的对象进入老年代 -XX:MaxTenuringThreshold</li>
+<li>空间分配担保: 老年代最大可用的连续空间是否大于新生代所有对象总空间<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="如何处理循环引用"><a href="#如何处理循环引用" class="headerlink" title="如何处理循环引用"></a>如何处理循环引用</h3>通过扫描是否有当前被引用的GCROOT到达,如果没有则可以清除</li>
+</ul>
+<h3 id="shallow-heap-和-retained-heap"><a href="#shallow-heap-和-retained-heap" class="headerlink" title="shallow heap 和 retained heap"></a>shallow heap 和 retained heap</h3><p>shallow heap是自身的内存开销<br>retained heap 是对象被清除后能回收多少内存</p>
+<h3 id="major-gc-amp-fullgc"><a href="#major-gc-amp-fullgc" class="headerlink" title="major gc &amp; fullgc"></a>major gc &amp; fullgc</h3><p>作者：RednaxelaFX<br>链接：<a href="https://www.zhihu.com/question/41922036/answer/93079526" target="_blank" rel="noopener">https://www.zhihu.com/question/41922036/answer/93079526</a><br>来源：知乎<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+<p>针对HotSpot VM的实现，它里面的GC其实准确分类只有两大种：Partial GC：并不收集整个GC堆的模式Young GC：只收集young gen的GCOld GC：只收集old gen的GC。只有CMS的concurrent collection是这个模式Mixed GC：收集整个young gen以及部分old gen的GC。只有G1有这个模式Full GC：收集整个堆，包括young gen、old gen、perm gen（如果存在的话）等所有部分的模式。Major GC通常是跟full GC是等价的，收集整个GC堆。但因为HotSpot VM发展了这么多年，外界对各种名词的解读已经完全混乱了，当有人说“major GC”的时候一定要问清楚他想要指的是上面的full GC还是old GC。最简单的分代式GC策略，按HotSpot VM的serial GC的实现来看，触发条件是：young GC：当young gen中的eden区分配满的时候触发。注意young GC中有部分存活对象会晋升到old gen，所以young GC后old gen的占用量通常会有所升高。full GC：当准备要触发一次young GC时，如果发现统计数据说之前young GC的平均晋升大小比目前old gen剩余的空间大，则不会触发young GC而是转为触发full GC（因为HotSpot VM的GC里，除了CMS的concurrent collection之外，其它能收集old gen的GC都会同时收集整个GC堆，包括young gen，所以不需要事先触发一次单独的young GC）；或者，如果有perm gen的话，要在perm gen分配空间但已经没有足够空间时，也要触发一次full GC；或者System.gc()、heap dump带GC，默认也是触发full GC。HotSpot VM里其它非并发GC的触发条件复杂一些，不过大致的原理与上面说的其实一样。当然也总有例外。Parallel Scavenge（-XX:+UseParallelGC）框架下，默认是在要触发full GC前先执行一次young GC，并且两次GC之间能让应用程序稍微运行一小下，以期降低full GC的暂停时间（因为young GC会尽量清理了young gen的死对象，减少了full GC的工作量）。控制这个行为的VM参数是-XX:+ScavengeBeforeFullGC。这是HotSpot VM里的奇葩嗯。可跳传送门围观：JVM full GC的奇怪现象，求解惑？ - RednaxelaFX 的回答并发GC的触发条件就不太一样。以CMS GC为例，它主要是定时去检查old gen的使用量，当使用量超过了触发比例就会启动一次CMS GC，对old gen做并发收集。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/03/java/tomcat/Catalina & BootStrap/" rel="next" title>
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/03/linux/cgroup/core/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Gc"><span class="nav-number">1.</span> <span class="nav-text">Gc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存区域"><span class="nav-number">1.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代信息"><span class="nav-number">1.2.</span> <span class="nav-text">分代信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-算法"><span class="nav-number">1.3.</span> <span class="nav-text">GC 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#过程"><span class="nav-number">1.3.1.</span> <span class="nav-text">过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#标记-清除"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">标记-清除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#标记-整理"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">标记-整理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复制"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分代收集"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">分代收集</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新生代"><span class="nav-number">1.3.2.</span> <span class="nav-text">新生代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#老年代"><span class="nav-number">1.3.3.</span> <span class="nav-text">老年代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分配策略"><span class="nav-number">1.4.</span> <span class="nav-text">内存分配策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">1.5.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何处理循环引用"><span class="nav-number">1.5.1.</span> <span class="nav-text">如何处理循环引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shallow-heap-和-retained-heap"><span class="nav-number">1.5.2.</span> <span class="nav-text">shallow heap 和 retained heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#major-gc-amp-fullgc"><span class="nav-number">1.5.3.</span> <span class="nav-text">major gc &amp; fullgc</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

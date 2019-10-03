@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="### 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lxm798">
+<meta property="og:url" content="http://yoursite.com/2019/10/03/java/tomcat/StandardContext/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="### 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-03T15:15:07.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lxm798">
+<meta name="twitter:description" content="### 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/03/java/tomcat/StandardContext/">
+
+
+
+
+
+  <title> | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/03/java/tomcat/StandardContext/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-03T23:15:07+08:00">
+                2019-10-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>#<br>##</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line">    <span class="comment">// 当前已经启动的情况下,又重新启动</span></span><br><span class="line">    <span class="keyword">if</span> (started)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> LifecycleException</span><br><span class="line">            (sm.getString(<span class="string">"containerBase.alreadyStarted"</span>, logName()));</span><br><span class="line">    <span class="comment">// 打印debug 日志</span></span><br><span class="line">    <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">        log(<span class="string">"Starting"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通知监听器</span></span><br><span class="line">    lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">        log(<span class="string">"Processing start(), current available="</span> + getAvailable());</span><br><span class="line">    <span class="comment">// 设置available 和configured 为false</span></span><br><span class="line">    setAvailable(<span class="keyword">false</span>);</span><br><span class="line">    setConfigured(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">boolean</span> ok = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add missing components as necessary</span></span><br><span class="line">    <span class="keyword">if</span> (getResources() == <span class="keyword">null</span>) &#123;   <span class="comment">// (1) Required by Loader</span></span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">            log(<span class="string">"Configuring default Resources"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> ((docBase != <span class="keyword">null</span>) &amp;&amp; (docBase.endsWith(<span class="string">".war"</span>)))</span><br><span class="line">                setResources(<span class="keyword">new</span> WARDirContext());</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                setResources(<span class="keyword">new</span> FileDirContext());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">            log(<span class="string">"Error initializing resources: "</span> + e.getMessage());</span><br><span class="line">            ok = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (ok &amp;&amp; (resources <span class="keyword">instanceof</span> ProxyDirContext)) &#123;</span><br><span class="line">        DirContext dirContext =</span><br><span class="line">            ((ProxyDirContext) resources).getDirContext();</span><br><span class="line">        <span class="keyword">if</span> ((dirContext != <span class="keyword">null</span>)</span><br><span class="line">            &amp;&amp; (dirContext <span class="keyword">instanceof</span> BaseDirContext)) &#123;</span><br><span class="line">            ((BaseDirContext) dirContext).setDocBase(getBasePath());</span><br><span class="line">            ((BaseDirContext) dirContext).allocate();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (getLoader() == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (getPrivileged()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">                log(<span class="string">"Configuring privileged default Loader"</span>);</span><br><span class="line">            setLoader(<span class="keyword">new</span> WebappLoader(<span class="keyword">this</span>.getClass().getClassLoader()));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">                log(<span class="string">"Configuring non-privileged default Loader"</span>);</span><br><span class="line">            <span class="comment">// 设置默认loader,loader 用于加载Servlet</span></span><br><span class="line">            setLoader(<span class="keyword">new</span> WebappLoader(getParentClassLoader()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (getManager() == <span class="keyword">null</span>) &#123;     <span class="comment">// (3) After prerequisites</span></span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">            log(<span class="string">"Configuring default Manager"</span>);</span><br><span class="line">        <span class="comment">// 设置默认StandarManager,管理session</span></span><br><span class="line">        setManager(<span class="keyword">new</span> StandardManager());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// org.apache.catalina.util.CharsetMapper  ??</span></span><br><span class="line">    getCharsetMapper();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构造workDir 目录为 worl/engineName/hostName/temp    temp是当前Context的name</span></span><br><span class="line">    <span class="comment">// 创建catalina.base目录,设置javax.servlet.context.tempdir环境变量</span></span><br><span class="line">    <span class="comment">// Context提供的临时目录的路径，用于servlet的临时读/写。利用javax.servlet.context.tempdir属性，servlet可以访问该目录。如果没有指定，使用$CATALINA_HOME/work下一个合适的目录</span></span><br><span class="line">    postWorkDirectory();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果希望Catalina为该web应用使能一个JNDIInitialContext对象，设为true</span></span><br><span class="line">    String useNamingProperty = System.getProperty(<span class="string">"catalina.useNaming"</span>);</span><br><span class="line">    <span class="keyword">if</span> ((useNamingProperty != <span class="keyword">null</span>)</span><br><span class="line">        &amp;&amp; (useNamingProperty.equals(<span class="string">"false"</span>))) &#123;</span><br><span class="line">        useNaming = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ok &amp;&amp; isUseNaming()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (namingContextListener == <span class="keyword">null</span>) &#123;</span><br><span class="line">            namingContextListener = <span class="keyword">new</span> NamingContextListener();</span><br><span class="line">            namingContextListener.setDebug(getDebug());</span><br><span class="line">            namingContextListener.setName(getNamingContextName());</span><br><span class="line">            addLifecycleListener(namingContextListener);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Binding thread</span></span><br><span class="line">    ClassLoader oldCCL = bindThread();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Standard container startup</span></span><br><span class="line">    <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">        log(<span class="string">"Processing standard container startup"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// org.apache.catalina.core.StandardContextMapper</span></span><br><span class="line">            addDefaultMapper(<span class="keyword">this</span>.mapperClass);</span><br><span class="line">            started = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// webloader和logger初始化</span></span><br><span class="line">            <span class="keyword">if</span> ((loader != <span class="keyword">null</span>) &amp;&amp; (loader <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) loader).start();</span><br><span class="line">            <span class="keyword">if</span> ((logger != <span class="keyword">null</span>) &amp;&amp; (logger <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) logger).start();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// ????</span></span><br><span class="line">            unbindThread(oldCCL);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// ????</span></span><br><span class="line">            oldCCL = bindThread();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((cluster != <span class="keyword">null</span>) &amp;&amp; (cluster <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) cluster).start();</span><br><span class="line">            <span class="keyword">if</span> ((realm != <span class="keyword">null</span>) &amp;&amp; (realm <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) realm).start();</span><br><span class="line">            <span class="keyword">if</span> ((resources != <span class="keyword">null</span>) &amp;&amp; (resources <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) resources).start();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 初始化所有Mapper</span></span><br><span class="line">            Mapper mappers[] = findMappers();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mappers.length; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (mappers[i] <span class="keyword">instanceof</span> Lifecycle)</span><br><span class="line">                    ((Lifecycle) mappers[i]).start();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 初始化所有的子Container</span></span><br><span class="line">            Container children[] = findChildren();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (children[i] <span class="keyword">instanceof</span> Lifecycle)</span><br><span class="line">                    ((Lifecycle) children[i]).start();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 初始化Valve pipeline 和 basic Valve</span></span><br><span class="line">            <span class="keyword">if</span> (pipeline <span class="keyword">instanceof</span> Lifecycle)</span><br><span class="line">                ((Lifecycle) pipeline).start();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// START_EVENT</span></span><br><span class="line">            lifecycle.fireLifecycleEvent(START_EVENT, <span class="keyword">null</span>);</span><br><span class="line">            <span class="comment">// session manager 初始化</span></span><br><span class="line">            <span class="keyword">if</span> ((manager != <span class="keyword">null</span>) &amp;&amp; (manager <span class="keyword">instanceof</span> Lifecycle))</span><br><span class="line">                ((Lifecycle) manager).start();</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// Unbinding thread</span></span><br><span class="line">            unbindThread(oldCCL);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果没有listener设置为configured, 不正常</span></span><br><span class="line">    <span class="keyword">if</span> (!getConfigured())</span><br><span class="line">        ok = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We put the resources into the servlet context</span></span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">        getServletContext().setAttribute</span><br><span class="line">            (Globals.RESOURCES_ATTR, getResources());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Binding thread</span></span><br><span class="line">    oldCCL = bindThread();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create context attributes that will be required</span></span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">            log(<span class="string">"Posting standard context attributes"</span>);</span><br><span class="line">        <span class="comment">// 设置org.apache.catalina.WELCOME_FILES 属性</span></span><br><span class="line">        postWelcomeFiles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ?????</span></span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!listenerStart())</span><br><span class="line">            ok = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        <span class="comment">// 初始化所有的filter</span></span><br><span class="line">        <span class="keyword">if</span> (!filterStart())</span><br><span class="line">            ok = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化 "load on startup"的类</span></span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">        loadOnStartup(findChildren());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ?????</span></span><br><span class="line">    unbindThread(oldCCL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set available status depending upon startup success</span></span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">            log(<span class="string">"Starting completed"</span>);</span><br><span class="line">        <span class="comment">// Avaliable 是内部初始化完成,Configured是外部监听到的正常</span></span><br><span class="line">        setAvailable(<span class="keyword">true</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        log(sm.getString(<span class="string">"standardContext.startFailed"</span>));</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            stop();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            log(sm.getString(<span class="string">"standardContext.startCleanup"</span>), t);</span><br><span class="line">        &#125;</span><br><span class="line">        setAvailable(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Notify our interested LifecycleListeners</span></span><br><span class="line">    lifecycle.fireLifecycleEvent(AFTER_START_EVENT, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ClassLoader <span class="title">bindThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ClassLoader oldContextClassLoader =</span><br><span class="line">        Thread.currentThread().getContextClassLoader();</span><br><span class="line">    <span class="comment">// ???</span></span><br><span class="line">    <span class="keyword">if</span> (getResources() == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> oldContextClassLoader;</span><br><span class="line">    <span class="comment">// 设置线程内部的classloader,部分代码会使用thread 内部的classloader</span></span><br><span class="line">    Thread.currentThread().setContextClassLoader</span><br><span class="line">        (getLoader().getClassLoader());</span><br><span class="line"></span><br><span class="line">    DirContextURLStreamHandler.bind(getResources());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (isUseNaming()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ContextBindings.bindThread(<span class="keyword">this</span>, <span class="keyword">this</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NamingException e) &#123;</span><br><span class="line">            <span class="comment">// Silent catch, as this is a normal case during the early</span></span><br><span class="line">            <span class="comment">// startup stages</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> oldContextClassLoader;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Container <span class="title">map</span><span class="params">(Request request, <span class="keyword">boolean</span> update)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> debug = context.getDebug();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Has this request already been mapped?</span></span><br><span class="line">    <span class="keyword">if</span> (update &amp;&amp; (request.getWrapper() != <span class="keyword">null</span>))</span><br><span class="line">        <span class="keyword">return</span> (request.getWrapper());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Identify the context-relative URI to be mapped</span></span><br><span class="line">    String contextPath =</span><br><span class="line">        ((HttpServletRequest) request.getRequest()).getContextPath();</span><br><span class="line">    String requestURI = ((HttpRequest) request).getDecodedRequestURI();</span><br><span class="line">    String relativeURI = requestURI.substring(contextPath.length());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (debug &gt;= <span class="number">1</span>)</span><br><span class="line">        context.log(<span class="string">"Mapping contextPath='"</span> + contextPath +</span><br><span class="line">                    <span class="string">"' with requestURI='"</span> + requestURI +</span><br><span class="line">                    <span class="string">"' and relativeURI='"</span> + relativeURI + <span class="string">"'"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Apply the standard request URI mapping rules from the specification</span></span><br><span class="line">    Wrapper wrapper = <span class="keyword">null</span>;</span><br><span class="line">    String servletPath = relativeURI;</span><br><span class="line">    String pathInfo = <span class="keyword">null</span>;</span><br><span class="line">    String name = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 找到和路径匹配的Wrapper</span></span><br><span class="line">    <span class="comment">// 如果满足条件返回Wrapper</span></span><br><span class="line">    <span class="comment">// Rule 1 -- Exact Match</span></span><br><span class="line">    <span class="keyword">if</span> (wrapper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">2</span>)</span><br><span class="line">            context.log(<span class="string">"  Trying exact match"</span>);</span><br><span class="line">        <span class="keyword">if</span> (!(relativeURI.equals(<span class="string">"/"</span>)))</span><br><span class="line">            name = context.findServletMapping(relativeURI);</span><br><span class="line">        <span class="keyword">if</span> (name != <span class="keyword">null</span>)</span><br><span class="line">            wrapper = (Wrapper) context.findChild(name);</span><br><span class="line">        <span class="keyword">if</span> (wrapper != <span class="keyword">null</span>) &#123;</span><br><span class="line">            servletPath = relativeURI;</span><br><span class="line">            pathInfo = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Rule 2 -- Prefix Match</span></span><br><span class="line">    <span class="keyword">if</span> (wrapper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">2</span>)</span><br><span class="line">            context.log(<span class="string">"  Trying prefix match"</span>);</span><br><span class="line">        servletPath = relativeURI;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            name = context.findServletMapping(servletPath + <span class="string">"/*"</span>);</span><br><span class="line">            <span class="keyword">if</span> (name != <span class="keyword">null</span>)</span><br><span class="line">                wrapper = (Wrapper) context.findChild(name);</span><br><span class="line">            <span class="keyword">if</span> (wrapper != <span class="keyword">null</span>) &#123;</span><br><span class="line">                pathInfo = relativeURI.substring(servletPath.length());</span><br><span class="line">                <span class="keyword">if</span> (pathInfo.length() == <span class="number">0</span>)</span><br><span class="line">                    pathInfo = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">int</span> slash = servletPath.lastIndexOf(<span class="string">'/'</span>);</span><br><span class="line">            <span class="keyword">if</span> (slash &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            servletPath = servletPath.substring(<span class="number">0</span>, slash);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// *.XX</span></span><br><span class="line">    <span class="keyword">if</span> (wrapper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">2</span>)</span><br><span class="line">            context.log(<span class="string">"  Trying extension match"</span>);</span><br><span class="line">        <span class="keyword">int</span> slash = relativeURI.lastIndexOf(<span class="string">'/'</span>);</span><br><span class="line">        <span class="keyword">if</span> (slash &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            String last = relativeURI.substring(slash);</span><br><span class="line">            <span class="keyword">int</span> period = last.lastIndexOf(<span class="string">'.'</span>);</span><br><span class="line">            <span class="keyword">if</span> (period &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                String pattern = <span class="string">"*"</span> + last.substring(period);</span><br><span class="line">                name = context.findServletMapping(pattern);</span><br><span class="line">                <span class="keyword">if</span> (name != <span class="keyword">null</span>)</span><br><span class="line">                    wrapper = (Wrapper) context.findChild(name);</span><br><span class="line">                <span class="keyword">if</span> (wrapper != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    servletPath = relativeURI;</span><br><span class="line">                    pathInfo = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Rule 4 -- Default Match</span></span><br><span class="line">    <span class="keyword">if</span> (wrapper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (debug &gt;= <span class="number">2</span>)</span><br><span class="line">            context.log(<span class="string">"  Trying default match"</span>);</span><br><span class="line">        name = context.findServletMapping(<span class="string">"/"</span>);</span><br><span class="line">        <span class="keyword">if</span> (name != <span class="keyword">null</span>)</span><br><span class="line">            wrapper = (Wrapper) context.findChild(name);</span><br><span class="line">        <span class="keyword">if</span> (wrapper != <span class="keyword">null</span>) &#123;</span><br><span class="line">            servletPath = relativeURI;</span><br><span class="line">            pathInfo = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update the Request (if requested) and return this Wrapper</span></span><br><span class="line">    <span class="keyword">if</span> ((debug &gt;= <span class="number">1</span>) &amp;&amp; (wrapper != <span class="keyword">null</span>))</span><br><span class="line">        context.log(<span class="string">" Mapped to servlet '"</span> + wrapper.getName() +</span><br><span class="line">                    <span class="string">"' with servlet path '"</span> + servletPath +</span><br><span class="line">                    <span class="string">"' and path info '"</span> + pathInfo +</span><br><span class="line">                    <span class="string">"' and update="</span> + update);</span><br><span class="line">    <span class="keyword">if</span> (update) &#123;</span><br><span class="line">        request.setWrapper(wrapper);</span><br><span class="line">        ((HttpRequest) request).setServletPath(servletPath);</span><br><span class="line">        ((HttpRequest) request).setPathInfo(pathInfo);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> (wrapper);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>匹配策略</p>
+<ol>
+<li>全匹配</li>
+<li>前缀匹配</li>
+<li>后缀匹配 *.jsp之类</li>
+<li>默认 /</li>
+</ol>
+<h2 id="reload"><a href="#reload" class="headerlink" title="reload"></a>reload</h2><p>reload 交给WebLoader,WebLoader在初始化时setContainer中获取是否需要reload,如果需要开启reload线程定时check 文件时间戳</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/03/linux/cgroup/cgroup/" rel="next" title>
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/03/java/tomcat/deploy/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#reload"><span class="nav-number">1.</span> <span class="nav-text">reload</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

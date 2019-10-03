@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进程调度1234567asmlinkage void __sched schedule(void)&amp;#123;	struct task_struct *tsk = current;	sched_submit_work(tsk);	__schedule();&amp;#125;  __schedule主调度过程 123456789101112131415161718192021222324252627282">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lxm798">
+<meta property="og:url" content="http://yoursite.com/2019/10/03/linux/cgroup/schedule/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="进程调度1234567asmlinkage void __sched schedule(void)&amp;#123;	struct task_struct *tsk = current;	sched_submit_work(tsk);	__schedule();&amp;#125;  __schedule主调度过程 123456789101112131415161718192021222324252627282">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-03T15:15:07.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lxm798">
+<meta name="twitter:description" content="进程调度1234567asmlinkage void __sched schedule(void)&amp;#123;	struct task_struct *tsk = current;	sched_submit_work(tsk);	__schedule();&amp;#125;  __schedule主调度过程 123456789101112131415161718192021222324252627282">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/03/linux/cgroup/schedule/">
+
+
+
+
+
+  <title> | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/03/linux/cgroup/schedule/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-03T23:15:07+08:00">
+                2019-10-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="进程调度"><a href="#进程调度" class="headerlink" title="进程调度"></a>进程调度</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">asmlinkage <span class="keyword">void</span> __<span class="function">sched <span class="title">schedule</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">tsk</span> = <span class="title">current</span>;</span></span><br><span class="line"></span><br><span class="line">	sched_submit_work(tsk);</span><br><span class="line">	__schedule();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="schedule"><a href="#schedule" class="headerlink" title="__schedule"></a>__schedule</h3><p>主调度过程</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __sched __schedule(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">prev</span>, *<span class="title">next</span>;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> *switch_count;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rq</span> *<span class="title">rq</span>;</span></span><br><span class="line">	<span class="keyword">int</span> cpu;</span><br><span class="line"></span><br><span class="line">need_resched:</span><br><span class="line">	preempt_disable();</span><br><span class="line">	cpu = smp_processor_id();</span><br><span class="line">	rq = cpu_rq(cpu);</span><br><span class="line">	rcu_note_context_switch(cpu);</span><br><span class="line">	prev = rq-&gt;curr;</span><br><span class="line"></span><br><span class="line">	schedule_debug(prev);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sched_feat(HRTICK))</span><br><span class="line">		hrtick_clear(rq);</span><br><span class="line"></span><br><span class="line">	raw_spin_lock_irq(&amp;rq-&gt;lock);</span><br><span class="line"></span><br><span class="line">	switch_count = &amp;prev-&gt;nivcsw;</span><br><span class="line">	<span class="keyword">if</span> (prev-&gt;state &amp;&amp; !(preempt_count() &amp; PREEMPT_ACTIVE)) &#123;</span><br><span class="line">		<span class="keyword">if</span> (unlikely(signal_pending_state(prev-&gt;state, prev))) &#123;</span><br><span class="line">			prev-&gt;state = TASK_RUNNING;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			deactivate_task(rq, prev, DEQUEUE_SLEEP);</span><br><span class="line">			prev-&gt;on_rq = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">			<span class="comment">/*</span></span><br><span class="line"><span class="comment">			 * If a worker went to sleep, notify and ask workqueue</span></span><br><span class="line"><span class="comment">			 * whether it wants to wake up a task to maintain</span></span><br><span class="line"><span class="comment">			 * concurrency.</span></span><br><span class="line"><span class="comment">			 */</span></span><br><span class="line">			<span class="keyword">if</span> (prev-&gt;flags &amp; PF_WQ_WORKER) &#123;</span><br><span class="line">				<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">to_wakeup</span>;</span></span><br><span class="line"></span><br><span class="line">				to_wakeup = wq_worker_sleeping(prev, cpu);</span><br><span class="line">				<span class="keyword">if</span> (to_wakeup)</span><br><span class="line">					try_to_wake_up_local(to_wakeup);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		switch_count = &amp;prev-&gt;nvcsw;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pre_schedule(rq, prev);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (unlikely(!rq-&gt;nr_running))</span><br><span class="line">		idle_balance(cpu, rq);</span><br><span class="line"></span><br><span class="line">	put_prev_task(rq, prev);</span><br><span class="line">	next = pick_next_task(rq);</span><br><span class="line">	clear_tsk_need_resched(prev);</span><br><span class="line">	rq-&gt;skip_clock_update = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (likely(prev != next)) &#123;</span><br><span class="line">		rq-&gt;nr_switches++;</span><br><span class="line">		rq-&gt;curr = next;</span><br><span class="line">		++*switch_count;</span><br><span class="line"></span><br><span class="line">		context_switch(rq, prev, next); <span class="comment">/* unlocks the rq */</span></span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * The context switch have flipped the stack from under us</span></span><br><span class="line"><span class="comment">		 * and restored the local variables which were saved when</span></span><br><span class="line"><span class="comment">		 * this task called schedule() in the past. prev == current</span></span><br><span class="line"><span class="comment">		 * is still correct, but it can be moved to another cpu/rq.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		cpu = smp_processor_id();</span><br><span class="line">		rq = cpu_rq(cpu);</span><br><span class="line">	&#125; <span class="keyword">else</span></span><br><span class="line">		raw_spin_unlock_irq(&amp;rq-&gt;lock);</span><br><span class="line"></span><br><span class="line">	post_schedule(rq);</span><br><span class="line"></span><br><span class="line">	sched_preempt_enable_no_resched();</span><br><span class="line">	<span class="keyword">if</span> (need_resched())</span><br><span class="line">		<span class="keyword">goto</span> need_resched;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="pick-next-task"><a href="#pick-next-task" class="headerlink" title="pick_next_task"></a>pick_next_task</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">调用进程调度类调度选择进程</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *</span></span><br><span class="line"><span class="class"><span class="title">pick_next_task</span>(<span class="title">struct</span> <span class="title">rq</span> *<span class="title">rq</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">sched_class</span> *<span class="title">class</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">p</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (likely(rq-&gt;nr_running == rq-&gt;cfs.h_nr_running)) &#123;</span><br><span class="line">		p = fair_sched_class.pick_next_task(rq);</span><br><span class="line">		<span class="keyword">if</span> (likely(p))</span><br><span class="line">			<span class="keyword">return</span> p;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	for_each_class(class) &#123;</span><br><span class="line">		p = class-&gt;pick_next_task(rq);</span><br><span class="line">		<span class="keyword">if</span> (p)</span><br><span class="line">			<span class="keyword">return</span> p;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	BUG(); <span class="comment">/* the idle class will always have a runnable task */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="cfs的选择算法"><a href="#cfs的选择算法" class="headerlink" title="cfs的选择算法"></a>cfs的选择算法</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> struct task_struct *<span class="title">pick_next_task_fair</span><span class="params">(struct rq *rq)</span>                                                                                                                                                      </span></span><br><span class="line"><span class="function"></span>&#123;                           </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">p</span>;</span>  </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cfs_rq</span> *<span class="title">cfs_rq</span> = &amp;<span class="title">rq</span>-&gt;<span class="title">cfs</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> *<span class="title">se</span>;</span></span><br><span class="line">                            </span><br><span class="line">    <span class="keyword">if</span> (!cfs_rq-&gt;nr_running)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;        </span><br><span class="line">                            </span><br><span class="line">    <span class="keyword">do</span> &#123;                    </span><br><span class="line">        se = pick_next_entity(cfs_rq);</span><br><span class="line">        set_next_entity(cfs_rq, se);</span><br><span class="line">		<span class="comment">// my_q</span></span><br><span class="line">        cfs_rq = group_cfs_rq(se);</span><br><span class="line">    &#125; <span class="keyword">while</span> (cfs_rq);       </span><br><span class="line">                            </span><br><span class="line">    p = task_of(se);        </span><br><span class="line">    <span class="keyword">if</span> (hrtick_enabled(rq)) </span><br><span class="line">        hrtick_start_fair(rq, p);</span><br><span class="line">                            </span><br><span class="line">    <span class="keyword">return</span> p;               </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> struct sched_entity *<span class="title">pick_next_entity</span><span class="params">(struct cfs_rq *cfs_rq)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 找到最左边的节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> *<span class="title">se</span> = __<span class="title">pick_first_entity</span>(<span class="title">cfs_rq</span>);</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> *<span class="title">left</span> = <span class="title">se</span>;</span></span><br><span class="line">       </span><br><span class="line">    <span class="comment">// 当前不能被调度?????</span></span><br><span class="line">    <span class="keyword">if</span> (cfs_rq-&gt;skip == se) &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> *<span class="title">second</span> = __<span class="title">pick_next_entity</span>(<span class="title">se</span>);</span></span><br><span class="line">        <span class="keyword">if</span> (second &amp;&amp; wakeup_preempt_entity(second, left) &lt; <span class="number">1</span>)</span><br><span class="line">            se = second;</span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="comment">//     </span></span><br><span class="line">    <span class="keyword">if</span> (cfs_rq-&gt;last &amp;&amp; wakeup_preempt_entity(cfs_rq-&gt;last, left) &lt; <span class="number">1</span>)</span><br><span class="line">        se = cfs_rq-&gt;last;</span><br><span class="line">         </span><br><span class="line">    <span class="keyword">if</span> (cfs_rq-&gt;next &amp;&amp; wakeup_preempt_entity(cfs_rq-&gt;next, left) &lt; <span class="number">1</span>)</span><br><span class="line">        se = cfs_rq-&gt;next;</span><br><span class="line">             </span><br><span class="line">    clear_buddies(cfs_rq, se);</span><br><span class="line">             </span><br><span class="line">    <span class="keyword">return</span> se;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> *__<span class="title">pick_first_entity</span>(<span class="title">struct</span> <span class="title">cfs_rq</span> *<span class="title">cfs_rq</span>)                                                                                                                                                    </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> *<span class="title">left</span> = <span class="title">cfs_rq</span>-&gt;<span class="title">rb_leftmost</span>;</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (!left)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> rb_entry(left, struct sched_entity, run_node);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="set-next-entity"><a href="#set-next-entity" class="headerlink" title="set_next_entity"></a>set_next_entity</h3><p>设置队列当前的sched_entity,并从红黑树中删除对应的sched_entity</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)</span><br><span class="line">&#123;  </span><br><span class="line">    <span class="comment">/* 'current' is not kept within the tree. */</span></span><br><span class="line">    <span class="keyword">if</span> (se-&gt;on_rq) &#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * Any task has to be enqueued before it get to execute on</span></span><br><span class="line"><span class="comment">         * a CPU. So account for the time it spent waiting on the</span></span><br><span class="line"><span class="comment">         * runqueue.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        update_stats_wait_end(cfs_rq, se);</span><br><span class="line">        __dequeue_entity(cfs_rq, se);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    update_stats_curr_start(cfs_rq, se);</span><br><span class="line">    cfs_rq-&gt;curr = se;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SCHEDSTATS</span></span><br><span class="line">    <span class="keyword">if</span> (rq_of(cfs_rq)-&gt;load.weight &gt;= <span class="number">2</span>*se-&gt;load.weight) &#123;</span><br><span class="line">        se-&gt;statistics.slice_max = max(se-&gt;statistics.slice_max,</span><br><span class="line">            se-&gt;sum_exec_runtime - se-&gt;prev_sum_exec_runtime);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    se-&gt;prev_sum_exec_runtime = se-&gt;sum_exec_runtime;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)                                                                                                                                       </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (cfs_rq-&gt;rb_leftmost == &amp;se-&gt;run_node) &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> *<span class="title">next_node</span>;</span></span><br><span class="line"> </span><br><span class="line">        next_node = rb_next(&amp;se-&gt;run_node);</span><br><span class="line">        cfs_rq-&gt;rb_leftmost = next_node;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    rb_erase(&amp;se-&gt;run_node, &amp;cfs_rq-&gt;tasks_timeline);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="cfs-bandwidth"><a href="#cfs-bandwidth" class="headerlink" title="cfs_bandwidth"></a>cfs_bandwidth</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)</span><br><span class="line">&#123;</span><br><span class="line">	u64 now;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (cfs_b-&gt;quota == RUNTIME_INF)</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	now = sched_clock_cpu(smp_processor_id());</span><br><span class="line">	<span class="comment">// 剩余的运行cpu周期数</span></span><br><span class="line">	cfs_b-&gt;runtime = cfs_b-&gt;quota;</span><br><span class="line">	<span class="comment">// 剩余的运行时间</span></span><br><span class="line">	cfs_b-&gt;runtime_expires = now + ktime_to_ns(cfs_b-&gt;period);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">assign_cfs_rq_runtime</span><span class="params">(struct cfs_rq *cfs_rq)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_group</span> *<span class="title">tg</span> = <span class="title">cfs_rq</span>-&gt;<span class="title">tg</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cfs_bandwidth</span> *<span class="title">cfs_b</span> = <span class="title">tg_cfs_bandwidth</span>(<span class="title">tg</span>);</span></span><br><span class="line">	u64 amount = <span class="number">0</span>, min_amount, expires;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* note: this is a positive sum as runtime_remaining &lt;= 0 */</span></span><br><span class="line">	min_amount = sched_cfs_bandwidth_slice() - cfs_rq-&gt;runtime_remaining;</span><br><span class="line"></span><br><span class="line">	raw_spin_lock(&amp;cfs_b-&gt;lock);</span><br><span class="line">	<span class="keyword">if</span> (cfs_b-&gt;quota == RUNTIME_INF)</span><br><span class="line">		amount = min_amount;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * If the bandwidth pool has become inactive, then at least one</span></span><br><span class="line"><span class="comment">		 * period must have elapsed since the last consumption.</span></span><br><span class="line"><span class="comment">		 * Refresh the global state and ensure bandwidth timer becomes</span></span><br><span class="line"><span class="comment">		 * active.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span> (!cfs_b-&gt;timer_active) &#123;</span><br><span class="line">			__refill_cfs_bandwidth_runtime(cfs_b);</span><br><span class="line">			__start_cfs_bandwidth(cfs_b);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (cfs_b-&gt;runtime &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			amount = min(cfs_b-&gt;runtime, min_amount);</span><br><span class="line">			cfs_b-&gt;runtime -= amount;</span><br><span class="line">			cfs_b-&gt;idle = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	expires = cfs_b-&gt;runtime_expires;</span><br><span class="line">	raw_spin_unlock(&amp;cfs_b-&gt;lock);</span><br><span class="line"></span><br><span class="line">	cfs_rq-&gt;runtime_remaining += amount;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * we may have advanced our local expiration to account for allowed</span></span><br><span class="line"><span class="comment">	 * spread between our sched_clock and the one on which runtime was</span></span><br><span class="line"><span class="comment">	 * issued.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> ((s64)(expires - cfs_rq-&gt;runtime_expires) &gt; <span class="number">0</span>)</span><br><span class="line">		cfs_rq-&gt;runtime_expires = expires;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cfs_rq-&gt;runtime_remaining &gt; <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __account_cfs_rq_runtime(struct cfs_rq *cfs_rq,</span><br><span class="line">				     <span class="keyword">unsigned</span> <span class="keyword">long</span> delta_exec)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* dock delta_exec before expiring quota (as it could span periods) */</span></span><br><span class="line">	cfs_rq-&gt;runtime_remaining -= delta_exec;</span><br><span class="line">	expire_cfs_rq_runtime(cfs_rq);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (likely(cfs_rq-&gt;runtime_remaining &gt; <span class="number">0</span>))</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * if we're unable to extend our runtime we resched so that the active</span></span><br><span class="line"><span class="comment">	 * hierarchy can be throttled</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (!assign_cfs_rq_runtime(cfs_rq) &amp;&amp; likely(cfs_rq-&gt;curr))</span><br><span class="line">		resched_task(rq_of(cfs_rq)-&gt;curr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">check_enqueue_throttle</span><span class="params">(struct cfs_rq *cfs_rq)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!cfs_bandwidth_used())</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* an active group must be handled by the update_curr()-&gt;put() path */</span></span><br><span class="line">	<span class="keyword">if</span> (!cfs_rq-&gt;runtime_enabled || cfs_rq-&gt;curr)</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* ensure the group is not already throttled */</span></span><br><span class="line">	<span class="keyword">if</span> (cfs_rq_throttled(cfs_rq))</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* update runtime allocation */</span></span><br><span class="line">	account_cfs_rq_runtime(cfs_rq, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (cfs_rq-&gt;runtime_remaining &lt;= <span class="number">0</span>)</span><br><span class="line">		throttle_cfs_rq(cfs_rq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, <span class="keyword">int</span> flags)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Update the normalized vruntime before updating min_vruntime</span></span><br><span class="line"><span class="comment">	 * through callig update_curr().</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (!(flags &amp; ENQUEUE_WAKEUP) || (flags &amp; ENQUEUE_WAKING))</span><br><span class="line">		se-&gt;vruntime += cfs_rq-&gt;min_vruntime;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Update run-time statistics of the 'current'.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	update_curr(cfs_rq);</span><br><span class="line">	update_cfs_load(cfs_rq, <span class="number">0</span>);</span><br><span class="line">	account_entity_enqueue(cfs_rq, se);</span><br><span class="line">	update_cfs_shares(cfs_rq);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (flags &amp; ENQUEUE_WAKEUP) &#123;</span><br><span class="line">		place_entity(cfs_rq, se, <span class="number">0</span>);</span><br><span class="line">		enqueue_sleeper(cfs_rq, se);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	update_stats_enqueue(cfs_rq, se);</span><br><span class="line">	check_spread(cfs_rq, se);</span><br><span class="line">	<span class="keyword">if</span> (se != cfs_rq-&gt;curr)</span><br><span class="line">		__enqueue_entity(cfs_rq, se);</span><br><span class="line">	se-&gt;on_rq = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (cfs_rq-&gt;nr_running == <span class="number">1</span>) &#123;</span><br><span class="line">		list_add_leaf_cfs_rq(cfs_rq);</span><br><span class="line">		check_enqueue_throttle(cfs_rq);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="update-curr-入口"><a href="#update-curr-入口" class="headerlink" title="update_curr 入口"></a>update_curr 入口</h3><p>reweight_entity<br>enqueue_entity<br>dequeue_entity<br>entity_tick<br>check_preempt_wakeup</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/03/linux/cgroup/fork/" rel="next" title>
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/03/linux/network/network/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#进程调度"><span class="nav-number">1.</span> <span class="nav-text">进程调度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#schedule"><span class="nav-number">1.1.</span> <span class="nav-text">__schedule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pick-next-task"><span class="nav-number">1.2.</span> <span class="nav-text">pick_next_task</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cfs的选择算法"><span class="nav-number">1.3.</span> <span class="nav-text">cfs的选择算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set-next-entity"><span class="nav-number">1.4.</span> <span class="nav-text">set_next_entity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cfs-bandwidth"><span class="nav-number">2.</span> <span class="nav-text">cfs_bandwidth</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#update-curr-入口"><span class="nav-number">2.1.</span> <span class="nav-text">update_curr 入口</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

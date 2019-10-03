@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="数据结构redis的立足点redis的数据结构很多是为了保证最坏情况下的时间,所以会有一些额外的内存开销,用于空间换时间 数据结构dict大小:2的指数 skiplist高度16层redis 跳跃表和一般跳跃表的实现多了:记录skip的记录:spanbackward:回溯指针,用于ZREVRANGE查找到最大的值后回溯 对象zset重看redis,发现zscore的复杂度是1,以前只记得zset使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lxm798">
+<meta property="og:url" content="http://yoursite.com/2019/10/03/redis/dict/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="数据结构redis的立足点redis的数据结构很多是为了保证最坏情况下的时间,所以会有一些额外的内存开销,用于空间换时间 数据结构dict大小:2的指数 skiplist高度16层redis 跳跃表和一般跳跃表的实现多了:记录skip的记录:spanbackward:回溯指针,用于ZREVRANGE查找到最大的值后回溯 对象zset重看redis,发现zscore的复杂度是1,以前只记得zset使">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-03T15:15:07.198Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lxm798">
+<meta name="twitter:description" content="数据结构redis的立足点redis的数据结构很多是为了保证最坏情况下的时间,所以会有一些额外的内存开销,用于空间换时间 数据结构dict大小:2的指数 skiplist高度16层redis 跳跃表和一般跳跃表的实现多了:记录skip的记录:spanbackward:回溯指针,用于ZREVRANGE查找到最大的值后回溯 对象zset重看redis,发现zscore的复杂度是1,以前只记得zset使">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/03/redis/dict/">
+
+
+
+
+
+  <title> | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/03/redis/dict/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-03T23:15:07+08:00">
+                2019-10-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h2 id="redis的立足点"><a href="#redis的立足点" class="headerlink" title="redis的立足点"></a>redis的立足点</h2><p>redis的数据结构很多是为了保证最坏情况下的时间,所以会有一些额外的内存开销,用于空间换时间</p>
+<h2 id="数据结构-1"><a href="#数据结构-1" class="headerlink" title="数据结构"></a>数据结构</h2><h3 id="dict"><a href="#dict" class="headerlink" title="dict"></a>dict</h3><p>大小:2的指数</p>
+<h3 id="skiplist"><a href="#skiplist" class="headerlink" title="skiplist"></a>skiplist</h3><p>高度16层<br>redis 跳跃表和一般跳跃表的实现多了:<br>记录skip的记录:span<br>backward:回溯指针,用于ZREVRANGE查找到最大的值后回溯</p>
+<h2 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h2><h3 id="zset"><a href="#zset" class="headerlink" title="zset"></a>zset</h3><p>重看redis,发现zscore的复杂度是1,以前只记得zset使用skiplist或者ziplist,这样怎么都不会出现o(1)复杂度.所以重新看实现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zset</span> &#123;</span></span><br><span class="line">    dict *dict;</span><br><span class="line">    zskiplist *zsl; </span><br><span class="line">&#125; zset;</span><br></pre></td></tr></table></figure>
+
+<p>看到这个数据结构的时候已经很明确了,zset使用一个额外的dict存储key-score用zskiplist存储score-key,顺便看一下zadd的流程</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">zaddGenericCommand</span><span class="params">(client *c, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">char</span> *nanerr = <span class="string">"resulting score is not a number (NaN)"</span>;</span><br><span class="line">    robj *key = c-&gt;argv[<span class="number">1</span>];</span><br><span class="line">    robj *zobj;</span><br><span class="line">    sds ele; </span><br><span class="line">    <span class="keyword">double</span> score = <span class="number">0</span>, *scores = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">int</span> j, elements;</span><br><span class="line">    <span class="keyword">int</span> scoreidx = <span class="number">0</span>; </span><br><span class="line">    <span class="comment">/* The following vars are used in order to track what the command actually</span></span><br><span class="line"><span class="comment">     * did during the execution, to reply to the client and to trigger the</span></span><br><span class="line"><span class="comment">     * notification of keyspace change. */</span></span><br><span class="line">    <span class="keyword">int</span> added = <span class="number">0</span>;      <span class="comment">/* Number of new elements added. */</span></span><br><span class="line">    <span class="keyword">int</span> updated = <span class="number">0</span>;    <span class="comment">/* Number of elements with updated score. */</span></span><br><span class="line">    <span class="keyword">int</span> processed = <span class="number">0</span>;  <span class="comment">/* Number of elements processed, may remain zero with</span></span><br><span class="line"><span class="comment">                           options like XX. */</span></span><br><span class="line">         </span><br><span class="line">    <span class="comment">/* Parse options. At the end 'scoreidx' is set to the argument position</span></span><br><span class="line"><span class="comment">     * of the score of the first score-element pair. */</span></span><br><span class="line">    scoreidx = <span class="number">2</span>; </span><br><span class="line">    <span class="keyword">while</span>(scoreidx &lt; c-&gt;argc) &#123;</span><br><span class="line">        <span class="keyword">char</span> *opt = c-&gt;argv[scoreidx]-&gt;ptr;</span><br><span class="line">        <span class="keyword">if</span> (!strcasecmp(opt,<span class="string">"nx"</span>)) flags |= ZADD_NX;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (!strcasecmp(opt,<span class="string">"xx"</span>)) flags |= ZADD_XX;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (!strcasecmp(opt,<span class="string">"ch"</span>)) flags |= ZADD_CH;                                                                                                                                                          </span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (!strcasecmp(opt,<span class="string">"incr"</span>)) flags |= ZADD_INCR;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">        scoreidx++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* Turn options into simple to check vars. */</span></span><br><span class="line">    <span class="keyword">int</span> incr = (flags &amp; ZADD_INCR) != <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> nx = (flags &amp; ZADD_NX) != <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> xx = (flags &amp; ZADD_XX) != <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> ch = (flags &amp; ZADD_CH) != <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* After the options, we expect to have an even number of args, since</span></span><br><span class="line"><span class="comment">     * we expect any number of score-element pairs. */</span></span><br><span class="line">    elements = c-&gt;argc-scoreidx;</span><br><span class="line">    <span class="keyword">if</span> (elements % <span class="number">2</span> || !elements) &#123;</span><br><span class="line">        addReply(c,shared.syntaxerr);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    elements /= <span class="number">2</span>; <span class="comment">/* Now this holds the number of score-element pairs. */</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Check for incompatible options. */</span></span><br><span class="line">    <span class="keyword">if</span> (nx &amp;&amp; xx) &#123;</span><br><span class="line">        addReplyError(c,</span><br><span class="line">            <span class="string">"XX and NX options at the same time are not compatible"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (incr &amp;&amp; elements &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        addReplyError(c,</span><br><span class="line">            <span class="string">"INCR option supports a single increment-element pair"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Start parsing all the scores, we need to emit any syntax error</span></span><br><span class="line"><span class="comment">     * before executing additions to the sorted set, as the command should</span></span><br><span class="line"><span class="comment">     * either execute fully or nothing at all. */</span></span><br><span class="line">    scores = zmalloc(<span class="keyword">sizeof</span>(<span class="keyword">double</span>)*elements);</span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; elements; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (getDoubleFromObjectOrReply(c,c-&gt;argv[scoreidx+j*<span class="number">2</span>],&amp;scores[j],<span class="literal">NULL</span>)</span><br><span class="line">            != C_OK) <span class="keyword">goto</span> cleanup;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Lookup the key and create the sorted set if does not exist. */</span></span><br><span class="line">    zobj = lookupKeyWrite(c-&gt;db,key);</span><br><span class="line">    <span class="keyword">if</span> (zobj == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (xx) <span class="keyword">goto</span> reply_to_client; <span class="comment">/* No key + XX option: nothing to do. */</span></span><br><span class="line">        <span class="keyword">if</span> (server.zset_max_ziplist_entries == <span class="number">0</span> ||</span><br><span class="line">            server.zset_max_ziplist_value &lt; sdslen(c-&gt;argv[scoreidx+<span class="number">1</span>]-&gt;ptr))</span><br><span class="line">        &#123;</span><br><span class="line">            zobj = createZsetObject();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            zobj = createZsetZiplistObject();</span><br><span class="line">        &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (zobj-&gt;type != OBJ_ZSET) &#123;</span><br><span class="line">            addReply(c,shared.wrongtypeerr);</span><br><span class="line">            <span class="keyword">goto</span> cleanup;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;    </span><br><span class="line">         </span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; elements; j++) &#123;</span><br><span class="line">        <span class="keyword">double</span> newscore;</span><br><span class="line">        score = scores[j];</span><br><span class="line">        <span class="keyword">int</span> retflags = flags;</span><br><span class="line">         </span><br><span class="line">        ele = c-&gt;argv[scoreidx+<span class="number">1</span>+j*<span class="number">2</span>]-&gt;ptr;</span><br><span class="line">        <span class="comment">// 上面暂时忽略,直接分析zsetAdd</span></span><br><span class="line">        <span class="keyword">int</span> retval = zsetAdd(zobj, score, ele, &amp;retflags, &amp;newscore);</span><br><span class="line">        <span class="keyword">if</span> (retval == <span class="number">0</span>) &#123;</span><br><span class="line">            addReplyError(c,nanerr);</span><br><span class="line">            <span class="keyword">goto</span> cleanup;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (retflags &amp; ZADD_ADDED) added++;</span><br><span class="line">        <span class="keyword">if</span> (retflags &amp; ZADD_UPDATED) updated++;</span><br><span class="line">        <span class="keyword">if</span> (!(retflags &amp; ZADD_NOP)) processed++;</span><br><span class="line">        score = newscore;</span><br><span class="line">    &#125;    </span><br><span class="line">    server.dirty += (added+updated);</span><br><span class="line">         </span><br><span class="line">    reply_to_client:</span><br><span class="line">    <span class="keyword">if</span> (incr) &#123; <span class="comment">/* ZINCRBY or INCR option. */</span></span><br><span class="line">        <span class="keyword">if</span> (processed)</span><br><span class="line">            addReplyDouble(c,score);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            addReply(c,shared.nullbulk);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">/* ZADD. */</span></span><br><span class="line">        addReplyLongLong(c,ch ? added+updated : added);</span><br><span class="line">    &#125;    </span><br><span class="line">         </span><br><span class="line">cleanup: </span><br><span class="line">    zfree(scores);</span><br><span class="line">    <span class="keyword">if</span> (added || updated) &#123;</span><br><span class="line">        signalModifiedKey(c-&gt;db,key);</span><br><span class="line">        notifyKeyspaceEvent(NOTIFY_ZSET,</span><br><span class="line">            incr ? <span class="string">"zincr"</span> : <span class="string">"zadd"</span>, key, c-&gt;db-&gt;id);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zsetAdd</span><span class="params">(robj *zobj, <span class="keyword">double</span> score, sds ele, <span class="keyword">int</span> *flags, <span class="keyword">double</span> *newscore)</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* Turn options into simple to check vars. */</span></span><br><span class="line">    <span class="keyword">int</span> incr = (*flags &amp; ZADD_INCR) != <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 只插入新key</span></span><br><span class="line">    <span class="keyword">int</span> nx = (*flags &amp; ZADD_NX) != <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 只在key存在的时候更新</span></span><br><span class="line">    <span class="keyword">int</span> xx = (*flags &amp; ZADD_XX) != <span class="number">0</span>;</span><br><span class="line">    *flags = <span class="number">0</span>; <span class="comment">/* We'll return our response flags. */</span></span><br><span class="line">    <span class="keyword">double</span> curscore;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">/* NaN as input is an error regardless of all the other parameters. */</span></span><br><span class="line">    <span class="keyword">if</span> (isnan(score)) &#123;</span><br><span class="line">        *flags = ZADD_NAN;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">/* Update the sorted set according to its encoding. */</span></span><br><span class="line">    <span class="keyword">if</span> (zobj-&gt;encoding == OBJ_ENCODING_ZIPLIST) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">char</span> *eptr;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">if</span> ((eptr = zzlFind(zobj-&gt;ptr,ele,&amp;curscore)) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="comment">/* NX? Return, same element already exists. */</span></span><br><span class="line">            <span class="keyword">if</span> (nx) &#123;</span><br><span class="line">                *flags |= ZADD_NOP;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">  </span><br><span class="line">            <span class="comment">/* Prepare the score for the increment if needed. */</span></span><br><span class="line">            <span class="keyword">if</span> (incr) &#123;</span><br><span class="line">                score += curscore;</span><br><span class="line">                <span class="keyword">if</span> (isnan(score)) &#123;</span><br><span class="line">                    *flags |= ZADD_NAN;</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (newscore) *newscore = score;</span><br><span class="line">            &#125;</span><br><span class="line">  </span><br><span class="line">            <span class="comment">/* Remove and re-insert when score changed. */</span></span><br><span class="line">            <span class="keyword">if</span> (score != curscore) &#123;</span><br><span class="line">                zobj-&gt;ptr = zzlDelete(zobj-&gt;ptr,eptr);</span><br><span class="line">                zobj-&gt;ptr = zzlInsert(zobj-&gt;ptr,ele,score);</span><br><span class="line">                *flags |= ZADD_UPDATED;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!xx) &#123;</span><br><span class="line">            <span class="comment">/* Optimize: check if the element is too large or the list</span></span><br><span class="line"><span class="comment">             * becomes too long *before* executing zzlInsert. */</span></span><br><span class="line">            zobj-&gt;ptr = zzlInsert(zobj-&gt;ptr,ele,score);                                                                                                                                                            </span><br><span class="line">            <span class="keyword">if</span> (zzlLength(zobj-&gt;ptr) &gt; server.zset_max_ziplist_entries)</span><br><span class="line">                zsetConvert(zobj,OBJ_ENCODING_SKIPLIST);</span><br><span class="line">            <span class="keyword">if</span> (sdslen(ele) &gt; server.zset_max_ziplist_value)</span><br><span class="line">                            zsetConvert(zobj,OBJ_ENCODING_SKIPLIST);</span><br><span class="line">            <span class="keyword">if</span> (newscore) *newscore = score;                                                                    *flags |= ZADD_ADDED;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            *flags |= ZADD_NOP;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (zobj-&gt;encoding == OBJ_ENCODING_SKIPLIST) &#123;</span><br><span class="line">        <span class="comment">// skiplist</span></span><br><span class="line">        zset *zs = zobj-&gt;ptr;</span><br><span class="line">        zskiplistNode *znode;</span><br><span class="line">        dictEntry *de;</span><br><span class="line">             </span><br><span class="line">        de = dictFind(zs-&gt;dict,ele);</span><br><span class="line">        <span class="keyword">if</span> (de != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="comment">/* NX? Return, same element already exists. */</span></span><br><span class="line">            <span class="keyword">if</span> (nx) &#123;    <span class="comment">// 如果是只插入新key,直接返回</span></span><br><span class="line">                *flags |= ZADD_NOP;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            curscore = *(<span class="keyword">double</span>*)dictGetVal(de);</span><br><span class="line">             </span><br><span class="line">            <span class="comment">/* Prepare the score for the increment if needed. */</span></span><br><span class="line">            <span class="keyword">if</span> (incr) &#123;</span><br><span class="line">                score += curscore;</span><br><span class="line">                <span class="keyword">if</span> (isnan(score)) &#123;</span><br><span class="line">                    *flags |= ZADD_NAN;</span><br><span class="line">                    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (newscore) *newscore = score;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* Remove and re-insert when score changes. */</span></span><br><span class="line">            <span class="keyword">if</span> (score != curscore) &#123;</span><br><span class="line">                zskiplistNode *node;</span><br><span class="line">                serverAssert(zslDelete(zs-&gt;zsl,curscore,ele,&amp;node));</span><br><span class="line">                znode = zslInsert(zs-&gt;zsl,score,node-&gt;ele);</span><br><span class="line">                <span class="comment">/* We reused the node-&gt;ele SDS string, free the node now</span></span><br><span class="line"><span class="comment">                 * since zslInsert created a new one. */</span></span><br><span class="line">                node-&gt;ele = <span class="literal">NULL</span>;</span><br><span class="line">                zslFreeNode(node);</span><br><span class="line">                <span class="comment">/* Note that we did not removed the original element from</span></span><br><span class="line"><span class="comment">                 * the hash table representing the sorted set, so we just</span></span><br><span class="line"><span class="comment">                 * update the score. */</span></span><br><span class="line">                dictGetVal(de) = &amp;znode-&gt;score; <span class="comment">/* Update score ptr. */</span></span><br><span class="line">                *flags |= ZADD_UPDATED;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!xx) &#123; <span class="comment">// 插入不存在的key</span></span><br><span class="line">            ele = sdsdup(ele);</span><br><span class="line">            znode = zslInsert(zs-&gt;zsl,score,ele);</span><br><span class="line">            serverAssert(dictAdd(zs-&gt;dict,ele,&amp;znode-&gt;score) == DICT_OK);</span><br><span class="line">            *flags |= ZADD_ADDED;</span><br><span class="line">            <span class="keyword">if</span> (newscore) *newscore = score;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            *flags |= ZADD_NOP;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">        serverPanic(<span class="string">"Unknown sorted set encoding"</span>);</span><br><span class="line">    &#125;        </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">/* Never reached. */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="机制"><a href="#机制" class="headerlink" title="机制"></a>机制</h2><h3 id="过期"><a href="#过期" class="headerlink" title="过期"></a>过期</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setExpire</span><span class="params">(client *c, redisDb *db, robj *key, <span class="keyword">long</span> <span class="keyword">long</span> when)</span> </span>&#123;</span><br><span class="line">    dictEntry *kde, *de; </span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Reuse the sds from the main dict in the expire dict */</span>                                                                                                                                                     </span><br><span class="line">    kde = dictFind(db-&gt;dict,key-&gt;ptr);</span><br><span class="line">    serverAssertWithInfo(<span class="literal">NULL</span>,key,kde != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    de = dictAddOrFind(db-&gt;expires,dictGetKey(kde));</span><br><span class="line">    <span class="comment">// 更新de中的val</span></span><br><span class="line">    dictSetSignedIntegerVal(de,when);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">int</span> writable_slave = server.masterhost &amp;&amp; server.repl_slave_ro == <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (c &amp;&amp; writable_slave &amp;&amp; !(c-&gt;flags &amp; CLIENT_MASTER))</span><br><span class="line">        rememberSlaveKeyWithExpire(db,key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/03/paper/borg/" rel="next" title>
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/03/paper/drf/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#redis的立足点"><span class="nav-number">1.1.</span> <span class="nav-text">redis的立足点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构-1"><span class="nav-number">1.2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dict"><span class="nav-number">1.2.1.</span> <span class="nav-text">dict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#skiplist"><span class="nav-number">1.2.2.</span> <span class="nav-text">skiplist</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象"><span class="nav-number">1.3.</span> <span class="nav-text">对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#zset"><span class="nav-number">1.3.1.</span> <span class="nav-text">zset</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机制"><span class="nav-number">1.4.</span> <span class="nav-text">机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#过期"><span class="nav-number">1.4.1.</span> <span class="nav-text">过期</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
