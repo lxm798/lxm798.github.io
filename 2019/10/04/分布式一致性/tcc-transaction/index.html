@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".tcc-transaction">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/分布式一致性/tcc-transaction/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-04T03:11:16.269Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".tcc-transaction">
+<meta name="twitter:description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/分布式一致性/tcc-transaction/">
+
+
+
+
+
+  <title>.tcc-transaction | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/分布式一致性/tcc-transaction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">.tcc-transaction</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="tcc-transaction-源码分析"><a href="#tcc-transaction-源码分析" class="headerlink" title="tcc-transaction 源码分析"></a>tcc-transaction 源码分析</h1><h2 id="总揽"><a href="#总揽" class="headerlink" title="总揽"></a>总揽</h2><p>tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.<br>tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.<br>悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.<br>通过定时任务扫描超时的事务,根据事务的状态确定是confirm还是cancel</p>
+<h2 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h2><p>具体的参数说明与tcc-transaction-http-order 中传入参数一致<br>ConfigurableTransactionAspect</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 事务管理器</span></span><br><span class="line">    TransactionManager transactionManager = transactionConfigurator.getTransactionManager();</span><br><span class="line"></span><br><span class="line">    CompensableTransactionInterceptor compensableTransactionInterceptor = <span class="keyword">new</span> CompensableTransactionInterceptor();</span><br><span class="line">    <span class="comment">// 注入事务管理器</span></span><br><span class="line">    compensableTransactionInterceptor.setTransactionManager(transactionManager);</span><br><span class="line">    <span class="comment">// 注入延时处理exeception</span></span><br><span class="line">    compensableTransactionInterceptor.setDelayCancelExceptions(transactionConfigurator.getRecoverConfig().getDelayCancelExceptions());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.setCompensableTransactionInterceptor(compensableTransactionInterceptor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompensableTransactionInterceptor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理包含Compensable注解的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">interceptCompensableMethod</span><span class="params">(ProceedingJoinPoint pjp)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Method method = CompensableMethodUtils.getCompensableMethod(pjp);</span><br><span class="line"></span><br><span class="line">        Compensable compensable = method.getAnnotation(Compensable.class);</span><br><span class="line">        <span class="comment">// REQUIRED</span></span><br><span class="line">        Propagation propagation = compensable.propagation();</span><br><span class="line">        TransactionContext transactionContext = FactoryBuilder.factoryOf(compensable.transactionContextEditor()).getInstance().get(pjp.getTarget(), method, pjp.getArgs());</span><br><span class="line">        <span class="comment">// 异步comfirm true</span></span><br><span class="line">        <span class="keyword">boolean</span> asyncConfirm = compensable.asyncConfirm();</span><br><span class="line">        <span class="comment">// 异步concel, false</span></span><br><span class="line">        <span class="keyword">boolean</span> asyncCancel = compensable.asyncCancel();</span><br><span class="line">        <span class="comment">// 当前线程是否有事务在处理</span></span><br><span class="line">        <span class="keyword">boolean</span> isTransactionActive = transactionManager.isTransactionActive();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!TransactionUtils.isLegalTransactionContext(isTransactionActive, propagation, transactionContext)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SystemException(<span class="string">"no active compensable transaction while propagation is mandatory for method "</span> + method.getName());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        MethodType methodType = CompensableMethodUtils.calculateMethodType(propagation, isTransactionActive, transactionContext);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (methodType) &#123;</span><br><span class="line">            <span class="keyword">case</span> ROOT:</span><br><span class="line">                <span class="keyword">return</span> rootMethodProceed(pjp, asyncConfirm, asyncCancel);</span><br><span class="line">            <span class="keyword">case</span> PROVIDER:</span><br><span class="line">                <span class="keyword">return</span> providerMethodProceed(pjp, transactionContext, asyncConfirm, asyncCancel);</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> pjp.proceed();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">rootMethodProceed</span><span class="params">(ProceedingJoinPoint pjp, <span class="keyword">boolean</span> asyncConfirm, <span class="keyword">boolean</span> asyncCancel)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Object returnValue = <span class="keyword">null</span>;</span><br><span class="line">        Transaction transaction = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 将transcation写入数据库</span></span><br><span class="line">            transaction = transactionManager.begin();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// try</span></span><br><span class="line">                returnValue = pjp.proceed();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable tryingException) &#123;</span><br><span class="line">                <span class="comment">// 异常不需要延时处理</span></span><br><span class="line">                <span class="keyword">if</span> (!isDelayCancelException(tryingException)) &#123;</span><br><span class="line">                   </span><br><span class="line">                    logger.warn(String.format(<span class="string">"compensable transaction trying failed. transaction content:%s"</span>, JSON.toJSONString(transaction)), tryingException);</span><br><span class="line">                    <span class="comment">// 执行rollback</span></span><br><span class="line">                    transactionManager.rollback(asyncCancel);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">throw</span> tryingException;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 提交</span></span><br><span class="line">            transactionManager.commit(asyncConfirm);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// 清除threadlocal 但是不清除数据库</span></span><br><span class="line">            transactionManager.cleanAfterCompletion(transaction);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> returnValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">providerMethodProceed</span><span class="params">(ProceedingJoinPoint pjp, TransactionContext transactionContext, <span class="keyword">boolean</span> asyncConfirm, <span class="keyword">boolean</span> asyncCancel)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line"></span><br><span class="line">        Transaction transaction = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">switch</span> (TransactionStatus.valueOf(transactionContext.getStatus())) &#123;</span><br><span class="line">                <span class="keyword">case</span> TRYING:</span><br><span class="line">                    transaction = transactionManager.propagationNewBegin(transactionContext);</span><br><span class="line">                    <span class="keyword">return</span> pjp.proceed();</span><br><span class="line">                <span class="keyword">case</span> CONFIRMING:</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        transaction = transactionManager.propagationExistBegin(transactionContext);</span><br><span class="line">                        transactionManager.commit(asyncConfirm);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (NoExistedTransactionException excepton) &#123;</span><br><span class="line">                        <span class="comment">//the transaction has been commit,ignore it.</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> CANCELLING:</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        transaction = transactionManager.propagationExistBegin(transactionContext);</span><br><span class="line">                        transactionManager.rollback(asyncCancel);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (NoExistedTransactionException exception) &#123;</span><br><span class="line">                        <span class="comment">//the transaction has been rollback,ignore it.</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            transactionManager.cleanAfterCompletion(transaction);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Method method = ((MethodSignature) (pjp.getSignature())).getMethod();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ReflectionUtils.getNullValue(method.getReturnType());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isDelayCancelException</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (delayCancelExceptions != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Class delayCancelException : delayCancelExceptions) &#123;</span><br><span class="line"></span><br><span class="line">                Throwable rootCause = ExceptionUtils.getRootCause(throwable);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (delayCancelException.isAssignableFrom(throwable.getClass())</span><br><span class="line">                        || (rootCause != <span class="keyword">null</span> &amp;&amp; delayCancelException.isAssignableFrom(rootCause.getClass()))) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Transaction</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">7291423944314337931L</span>;</span><br><span class="line">    <span class="comment">// 事务唯一ID</span></span><br><span class="line">    <span class="keyword">private</span> TransactionXid xid;</span><br><span class="line">    <span class="comment">// 事务状态 TRYING(1), CONFIRMING(2), CANCELLING(3);</span></span><br><span class="line">    <span class="keyword">private</span> TransactionStatus status;</span><br><span class="line">    <span class="comment">// 事务类型    ROOT(1),    BRANCH(2);</span></span><br><span class="line">    <span class="keyword">private</span> TransactionType transactionType;</span><br><span class="line">    <span class="comment">// 重试次数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> retriedCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Date createTime = <span class="keyword">new</span> Date();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Date lastUpdateTime = <span class="keyword">new</span> Date();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> version = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 参与者</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Participant&gt; participants = <span class="keyword">new</span> ArrayList&lt;Participant&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Object&gt; attachments = <span class="keyword">new</span> ConcurrentHashMap&lt;String, Object&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Transaction</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Transaction</span><span class="params">(TransactionContext transactionContext)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.xid = transactionContext.getXid();</span><br><span class="line">        <span class="keyword">this</span>.status = TransactionStatus.TRYING;</span><br><span class="line">        <span class="keyword">this</span>.transactionType = TransactionType.BRANCH;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Transaction</span><span class="params">(TransactionType transactionType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.xid = <span class="keyword">new</span> TransactionXid();</span><br><span class="line">        <span class="keyword">this</span>.status = TransactionStatus.TRYING;</span><br><span class="line">        <span class="keyword">this</span>.transactionType = transactionType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enlistParticipant</span><span class="params">(Participant participant)</span> </span>&#123;</span><br><span class="line">        participants.add(participant);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Xid <span class="title">getXid</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> xid.clone();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TransactionStatus <span class="title">getStatus</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Participant&gt; <span class="title">getParticipants</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> participants;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TransactionType <span class="title">getTransactionType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> transactionType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changeStatus</span><span class="params">(TransactionStatus status)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.status = status;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 遍历所有Participant,执行commit</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">commit</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (Participant participant : participants) &#123;</span><br><span class="line">            participant.commit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 遍历所有Participant,执行rollback</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rollback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Participant participant : participants) &#123;</span><br><span class="line">            participant.rollback();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getRetriedCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> retriedCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addRetriedCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.retriedCount++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resetRetriedCount</span><span class="params">(<span class="keyword">int</span> retriedCount)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.retriedCount = retriedCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getAttachments</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> attachments;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getVersion</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> version;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateVersion</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.version++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setVersion</span><span class="params">(<span class="keyword">long</span> version)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.version = version;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getLastUpdateTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> lastUpdateTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLastUpdateTime</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.lastUpdateTime = date;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getCreateTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.lastUpdateTime = <span class="keyword">new</span> Date();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = Logger.getLogger(TransactionManager.class.getSimpleName());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> TransactionRepository transactionRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Deque&lt;Transaction&gt;&gt; CURRENT = <span class="keyword">new</span> ThreadLocal&lt;Deque&lt;Transaction&gt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ExecutorService executorService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTransactionRepository</span><span class="params">(TransactionRepository transactionRepository)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.transactionRepository = transactionRepository;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setExecutorService</span><span class="params">(ExecutorService executorService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.executorService = executorService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TransactionManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Transaction <span class="title">begin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 初始化xid,status,transcationType</span></span><br><span class="line">        Transaction transaction = <span class="keyword">new</span> Transaction(TransactionType.ROOT);</span><br><span class="line">        <span class="comment">// 插入tcc数据库</span></span><br><span class="line">        transactionRepository.create(transaction);</span><br><span class="line">        <span class="comment">// 注册threadlocal</span></span><br><span class="line">        registerTransaction(transaction);</span><br><span class="line">        <span class="keyword">return</span> transaction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Transaction <span class="title">propagationNewBegin</span><span class="params">(TransactionContext transactionContext)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Transaction transaction = <span class="keyword">new</span> Transaction(transactionContext);</span><br><span class="line">        transactionRepository.create(transaction);</span><br><span class="line"></span><br><span class="line">        registerTransaction(transaction);</span><br><span class="line">        <span class="keyword">return</span> transaction;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Transaction <span class="title">propagationExistBegin</span><span class="params">(TransactionContext transactionContext)</span> <span class="keyword">throws</span> NoExistedTransactionException </span>&#123;</span><br><span class="line">        Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (transaction != <span class="keyword">null</span>) &#123;</span><br><span class="line">            transaction.changeStatus(TransactionStatus.valueOf(transactionContext.getStatus()));</span><br><span class="line">            registerTransaction(transaction);</span><br><span class="line">            <span class="keyword">return</span> transaction;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NoExistedTransactionException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">commit</span><span class="params">(<span class="keyword">boolean</span> asyncCommit)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 当前事务</span></span><br><span class="line">        <span class="keyword">final</span> Transaction transaction = getCurrentTransaction();</span><br><span class="line">        <span class="comment">// 更新为提交中</span></span><br><span class="line">        transaction.changeStatus(TransactionStatus.CONFIRMING);</span><br><span class="line">        <span class="comment">// 更新tcc数据库</span></span><br><span class="line">        transactionRepository.update(transaction);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (asyncCommit) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Long statTime = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">                executorService.submit(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        commitTransaction(transaction);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">                logger.debug(<span class="string">"async submit cost time:"</span> + (System.currentTimeMillis() - statTime));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable commitException) &#123;</span><br><span class="line">                logger.warn(<span class="string">"compensable transaction async submit confirm failed, recovery job will try to confirm later."</span>, commitException);</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ConfirmingException(commitException);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            commitTransaction(transaction);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rollback</span><span class="params">(<span class="keyword">boolean</span> asyncRollback)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> Transaction transaction = getCurrentTransaction();</span><br><span class="line">        transaction.changeStatus(TransactionStatus.CANCELLING);</span><br><span class="line"></span><br><span class="line">        transactionRepository.update(transaction);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (asyncRollback) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                executorService.submit(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        rollbackTransaction(transaction);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable rollbackException) &#123;</span><br><span class="line">                logger.warn(<span class="string">"compensable transaction async rollback failed, recovery job will try to rollback later."</span>, rollbackException);</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> CancellingException(rollbackException);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">            rollbackTransaction(transaction);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">commitTransaction</span><span class="params">(Transaction transaction)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            transaction.commit();</span><br><span class="line">            <span class="comment">// 删除tcc记录</span></span><br><span class="line">            transactionRepository.delete(transaction);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable commitException) &#123;</span><br><span class="line">            logger.warn(<span class="string">"compensable transaction confirm failed, recovery job will try to confirm later."</span>, commitException);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConfirmingException(commitException);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rollbackTransaction</span><span class="params">(Transaction transaction)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            transaction.rollback();</span><br><span class="line">            transactionRepository.delete(transaction);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable rollbackException) &#123;</span><br><span class="line">            logger.warn(<span class="string">"compensable transaction rollback failed, recovery job will try to rollback later."</span>, rollbackException);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> CancellingException(rollbackException);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Transaction <span class="title">getCurrentTransaction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isTransactionActive()) &#123;</span><br><span class="line">            <span class="keyword">return</span> CURRENT.get().peek();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isTransactionActive</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Deque&lt;Transaction&gt; transactions = CURRENT.get();</span><br><span class="line">        <span class="keyword">return</span> transactions != <span class="keyword">null</span> &amp;&amp; !transactions.isEmpty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">registerTransaction</span><span class="params">(Transaction transaction)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (CURRENT.get() == <span class="keyword">null</span>) &#123;</span><br><span class="line">            CURRENT.set(<span class="keyword">new</span> LinkedList&lt;Transaction&gt;());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        CURRENT.get().push(transaction);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cleanAfterCompletion</span><span class="params">(Transaction transaction)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isTransactionActive() &amp;&amp; transaction != <span class="keyword">null</span>) &#123;</span><br><span class="line">            Transaction currentTransaction = getCurrentTransaction();</span><br><span class="line">            <span class="keyword">if</span> (currentTransaction == transaction) &#123;</span><br><span class="line">                CURRENT.get().pop();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> SystemException(<span class="string">"Illegal transaction when clean after completion"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enlistParticipant</span><span class="params">(Participant participant)</span> </span>&#123;</span><br><span class="line">        Transaction transaction = <span class="keyword">this</span>.getCurrentTransaction();</span><br><span class="line">        transaction.enlistParticipant(participant);</span><br><span class="line">        transactionRepository.update(transaction);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>悬挂事务恢复</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionRecovery</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> TransactionConfigurator transactionConfigurator;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startRecover</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        List&lt;Transaction&gt; transactions = loadErrorTransactions();</span><br><span class="line"></span><br><span class="line">        recoverErrorTransactions(transactions);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> List&lt;Transaction&gt; <span class="title">loadErrorTransactions</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> currentTimeInMillis = Calendar.getInstance().getTimeInMillis();</span><br><span class="line"></span><br><span class="line">        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();</span><br><span class="line">        RecoverConfig recoverConfig = transactionConfigurator.getRecoverConfig();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> transactionRepository.findAllUnmodifiedSince(<span class="keyword">new</span> Date(currentTimeInMillis - recoverConfig.getRecoverDuration() * <span class="number">1000</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">recoverErrorTransactions</span><span class="params">(List&lt;Transaction&gt; transactions)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (Transaction transaction : transactions) &#123;</span><br><span class="line">            <span class="comment">// 大于最大重试次数</span></span><br><span class="line">            <span class="keyword">if</span> (transaction.getRetriedCount() &gt; transactionConfigurator.getRecoverConfig().getMaxRetryCount()) &#123;</span><br><span class="line"></span><br><span class="line">                logger.error(String.format(<span class="string">"recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d,transaction content:%s"</span>, transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)));</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 分支事务</span></span><br><span class="line">            <span class="keyword">if</span> (transaction.getTransactionType().equals(TransactionType.BRANCH)</span><br><span class="line">                    &amp;&amp; (transaction.getCreateTime().getTime() +</span><br><span class="line">                    transactionConfigurator.getRecoverConfig().getMaxRetryCount() *</span><br><span class="line">                            transactionConfigurator.getRecoverConfig().getRecoverDuration() * <span class="number">1000</span></span><br><span class="line">                    &gt; System.currentTimeMillis())) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 增加重试次数</span></span><br><span class="line">                transaction.addRetriedCount();</span><br><span class="line">                <span class="comment">// try 结束,提交前失败,进入CONFIRMING阶段就认为成功</span></span><br><span class="line">                <span class="keyword">if</span> (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) &#123;</span><br><span class="line"></span><br><span class="line">                    transaction.changeStatus(TransactionStatus.CONFIRMING);</span><br><span class="line">                    transactionConfigurator.getTransactionRepository().update(transaction);</span><br><span class="line">                    <span class="comment">// 这时的transcation 已经写入</span></span><br><span class="line">                    transaction.commit();</span><br><span class="line">                    transactionConfigurator.getTransactionRepository().delete(transaction);</span><br><span class="line"></span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (transaction.getStatus().equals(TransactionStatus.CANCELLING)</span><br><span class="line">                        || transaction.getTransactionType().equals(TransactionType.ROOT)) &#123;</span><br><span class="line">                    <span class="comment">//在try 或者cancel阶段直接失败</span></span><br><span class="line">                    transaction.changeStatus(TransactionStatus.CANCELLING);</span><br><span class="line">                    transactionConfigurator.getTransactionRepository().update(transaction);</span><br><span class="line">                    transaction.rollback();</span><br><span class="line">                    transactionConfigurator.getTransactionRepository().delete(transaction);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (throwable <span class="keyword">instanceof</span> OptimisticLockException</span><br><span class="line">                        || ExceptionUtils.getRootCause(throwable) <span class="keyword">instanceof</span> OptimisticLockException) &#123;</span><br><span class="line">                    logger.warn(String.format(<span class="string">"optimisticLockException happened while recover. txid:%s, status:%s,retried count:%d,transaction content:%s"</span>, transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)), throwable);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    logger.error(String.format(<span class="string">"recover failed, txid:%s, status:%s,retried count:%d,transaction content:%s"</span>, transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)), throwable);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTransactionConfigurator</span><span class="params">(TransactionConfigurator transactionConfigurator)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.transactionConfigurator = transactionConfigurator;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/04/分布式一致性/redis和mysql一致性/" rel="next" title=".redis和mysql一致性">
+                <i class="fa fa-chevron-left"></i> .redis和mysql一致性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/04/分布式一致性/分布式一致性/" rel="prev" title=".分布式一致性">
+                .分布式一致性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#tcc-transaction-源码分析"><span class="nav-number">1.</span> <span class="nav-text">tcc-transaction 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#总揽"><span class="nav-number">1.1.</span> <span class="nav-text">总揽</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理"><span class="nav-number">1.2.</span> <span class="nav-text">处理</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

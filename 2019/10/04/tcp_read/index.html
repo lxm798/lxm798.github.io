@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="int tcp_recvmsg(struct kiocb iocb, struct sock *sk, struct msghdr *msg,        size_t len, int nonblock, int flags, int *addr_len){    struct tcp_sock *tp = tcp_sk(sk);    int copied = 0;    u32 peek_">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".tcp_read">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/tcp_read/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="int tcp_recvmsg(struct kiocb iocb, struct sock *sk, struct msghdr *msg,        size_t len, int nonblock, int flags, int *addr_len){    struct tcp_sock *tp = tcp_sk(sk);    int copied = 0;    u32 peek_">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-04T03:11:16.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".tcp_read">
+<meta name="twitter:description" content="int tcp_recvmsg(struct kiocb iocb, struct sock *sk, struct msghdr *msg,        size_t len, int nonblock, int flags, int *addr_len){    struct tcp_sock *tp = tcp_sk(sk);    int copied = 0;    u32 peek_">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/tcp_read/">
+
+
+
+
+
+  <title>.tcp_read | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/tcp_read/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">.tcp_read</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>int tcp_recvmsg(struct kiocb <em>iocb, struct sock *sk, struct msghdr *msg,<br>        size_t len, int nonblock, int flags, int *addr_len)<br>{<br>    struct tcp_sock *tp = tcp_sk(sk);<br>    int copied = 0;<br>    u32 peek_seq;<br>    u32 *seq;<br>    unsigned long used;<br>    int err;<br>    int target;        /</em> Read at least this many bytes */<br>    long timeo;<br>    struct task_struct *user_recv = NULL;<br>    int copied_early = 0;<br>    struct sk_buff *skb;</p>
+<pre><code>lock_sock(sk);
+
+TCP_CHECK_TIMER(sk);
+
+err = -ENOTCONN;
+if (sk-&gt;sk_state == TCP_LISTEN)
+    goto out;
+// rcv 超时时间
+timeo = sock_rcvtimeo(sk, nonblock);
+
+/* Urgent data needs to be handled specially. */
+if (flags &amp; MSG_OOB)
+    goto recv_urg;
+// 还没有读出的数据头
+seq = &amp;tp-&gt;copied_seq;
+if (flags &amp; MSG_PEEK) {
+    peek_seq = tp-&gt;copied_seq;
+    seq = &amp;peek_seq;
+}
+
+// 返回的最少数据
+target = sock_rcvlowat(sk, flags &amp; MSG_WAITALL, len);</code></pre><p>#ifdef CONFIG_NET_DMA<br>    tp-&gt;ucopy.dma_chan = NULL;<br>    preempt_disable();<br>    // 取出一个 receive_queue中的数据<br>    skb = skb_peek_tail(&amp;sk-&gt;sk_receive_queue);<br>    {<br>        int available = 0;<br>        // recieve_queue中sk_buff不是空<br>        if (skb)<br>            // 当前可用的字节数， 一定时连续的吗？<br>            available = TCP_SKB_CB(skb)-&gt;seq + skb-&gt;len - (*seq);<br>        if ((available &lt; target) &amp;&amp;<br>            (len &gt; sysctl_tcp_dma_copybreak) &amp;&amp; !(flags &amp; MSG_PEEK) &amp;&amp;<br>            !sysctl_tcp_low_latency &amp;&amp;<br>            __get_cpu_var(softnet_data).net_dma) {<br>            preempt_enable_no_resched();<br>            tp-&gt;ucopy.pinned_list =<br>                    dma_pin_iovec_pages(msg-&gt;msg_iov, len);<br>        } else {<br>            preempt_enable_no_resched();<br>        }<br>    }<br>#endif</p>
+<pre><code>do {
+    u32 offset;
+
+    /* Are we at urgent data? Stop if we have read anything or have SIGURG pending. */
+    if (tp-&gt;urg_data &amp;&amp; tp-&gt;urg_seq == *seq) {
+        if (copied)
+            break;
+        if (signal_pending(current)) {
+            copied = timeo ? sock_intr_errno(timeo) : -EAGAIN;
+            break;
+        }
+    }
+
+    /* Next get a buffer. */
+    // 读取receive_queue
+    skb = skb_peek(&amp;sk-&gt;sk_receive_queue);
+    do {
+        // receive_queue empty
+        if (!skb)
+            break;
+
+        /* Now that we have two receive queues this
+         * shouldn&apos;t happen.
+         */
+        if (before(*seq, TCP_SKB_CB(skb)-&gt;seq)) {
+            printk(KERN_INFO &quot;recvmsg bug: copied %X &quot;
+                   &quot;seq %X\n&quot;, *seq, TCP_SKB_CB(skb)-&gt;seq);
+            break;
+        }
+        // 已经读取的seq - 收到的seq
+        offset = *seq - TCP_SKB_CB(skb)-&gt;seq;
+        if (tcp_hdr(skb)-&gt;syn)
+            offset--;
+        // skb没有读完
+        if (offset &lt; skb-&gt;len)
+            goto found_ok_skb;
+        if (tcp_hdr(skb)-&gt;fin)
+            goto found_fin_ok;
+        BUG_TRAP(flags &amp; MSG_PEEK);
+        skb = skb-&gt;next;
+    } while (skb != (struct sk_buff *)&amp;sk-&gt;sk_receive_queue);
+
+    /* Well, if we have backlog, try to process it now yet. */
+    // 已经读取足够的数据 并且backlog 有数据
+    if (copied &gt;= target &amp;&amp; !sk-&gt;sk_backlog.tail)
+        break;
+    // 读取了部分数据
+    if (copied) {
+        // tcp状态已经结束，或者超时 或者有信号
+        if (sk-&gt;sk_err ||
+            sk-&gt;sk_state == TCP_CLOSE ||
+            (sk-&gt;sk_shutdown &amp; RCV_SHUTDOWN) ||
+            !timeo ||
+            signal_pending(current) ||
+            (flags &amp; MSG_PEEK))
+            break;
+    } else {
+        if (sock_flag(sk, SOCK_DONE))
+            break;
+
+        if (sk-&gt;sk_err) {
+            copied = sock_error(sk);
+            break;
+        }
+
+        if (sk-&gt;sk_shutdown &amp; RCV_SHUTDOWN)
+            break;
+
+        if (sk-&gt;sk_state == TCP_CLOSE) {
+            if (!sock_flag(sk, SOCK_DONE)) {
+                /* This occurs when user tries to read
+                 * from never connected socket.
+                 */
+                copied = -ENOTCONN;
+                break;
+            }
+            break;
+        }
+
+        if (!timeo) {
+            copied = -EAGAIN;
+            break;
+        }
+
+        if (signal_pending(current)) {
+            copied = sock_intr_errno(timeo);
+            break;
+        }
+    }
+    // 返回ack， 调整滑动缓冲区
+    tcp_cleanup_rbuf(sk, copied);
+    // 初始化ucopy  sysctl_tcp_low_latency？？
+    if (!sysctl_tcp_low_latency &amp;&amp; tp-&gt;ucopy.task == user_recv) {
+        /* Install new reader */
+        if (!user_recv &amp;&amp; !(flags &amp; (MSG_TRUNC | MSG_PEEK))) {
+            user_recv = current;
+            tp-&gt;ucopy.task = user_recv;
+            tp-&gt;ucopy.iov = msg-&gt;msg_iov;
+        }
+
+        tp-&gt;ucopy.len = len;
+
+        BUG_TRAP(tp-&gt;copied_seq == tp-&gt;rcv_nxt ||
+             (flags &amp; (MSG_PEEK | MSG_TRUNC)));
+
+        /* Ugly... If prequeue is not empty, we have to
+         * process it before releasing socket, otherwise
+         * order will be broken at second iteration.
+         * More elegant solution is required!!!
+         *
+         * Look: we have the following (pseudo)queues:
+         *
+         * 1. packets in flight
+         * 2. backlog
+         * 3. prequeue
+         * 4. receive_queue
+         *
+         * Each queue can be processed only if the next ones
+         * are empty. At this point we have empty receive_queue.
+         * But prequeue _can_ be not empty after 2nd iteration,
+         * when we jumped to start of loop because backlog
+         * processing added something to receive_queue.
+         * We cannot release_sock(), because backlog contains
+         * packets arrived _after_ prequeued ones.
+         *
+         * Shortly, algorithm is clear --- to process all
+         * the queues in order. We could make it more directly,
+         * requeueing packets from backlog to prequeue, if
+         * is not empty. It is more elegant, but eats cycles,
+         * unfortunately.
+         */
+        // prepare 非空
+        if (!skb_queue_empty(&amp;tp-&gt;ucopy.prequeue))
+            goto do_prequeue;
+
+        /* __ Set realtime policy in scheduler __ */
+    }
+    // 已经复制的满足缓冲区需求
+    if (copied &gt;= target) {
+        /* Do not sleep, just process backlog. */
+        release_sock(sk);
+        lock_sock(sk);
+    } else
+        // 等到超时或者receive_queue有新数据
+        sk_wait_data(sk, &amp;timeo);</code></pre><p>#ifdef CONFIG_NET_DMA<br>        tp-&gt;ucopy.wakeup = 0;<br>#endif</p>
+<pre><code>if (user_recv) {
+    int chunk;
+
+    /* __ Restore normal policy in scheduler __ */
+
+    if ((chunk = len - tp-&gt;ucopy.len) != 0) {
+        NET_ADD_STATS_USER(LINUX_MIB_TCPDIRECTCOPYFROMBACKLOG, chunk);
+        len -= chunk;
+        copied += chunk;
+    }
+    // Head of yet unread data，应用程序下次从这里复制数据
+    // 滑动缓冲区的左边界和
+    if (tp-&gt;rcv_nxt == tp-&gt;copied_seq &amp;&amp;
+        !skb_queue_empty(&amp;tp-&gt;ucopy.prequeue)) {</code></pre><p>do_prequeue:<br>                tcp_prequeue_process(sk);</p>
+<pre><code>            if ((chunk = len - tp-&gt;ucopy.len) != 0) {
+                NET_ADD_STATS_USER(LINUX_MIB_TCPDIRECTCOPYFROMPREQUEUE, chunk);
+                len -= chunk;
+                copied += chunk;
+            }
+        }
+    }
+    if ((flags &amp; MSG_PEEK) &amp;&amp; peek_seq != tp-&gt;copied_seq) {
+        if (net_ratelimit())
+            printk(KERN_DEBUG &quot;TCP(%s:%d): Application bug, race in MSG_PEEK.\n&quot;,
+                   current-&gt;comm, task_pid_nr(current));
+        peek_seq = tp-&gt;copied_seq;
+    }
+    continue;
+
+found_ok_skb:
+    /* Ok so how much can we use? */
+    used = skb-&gt;len - offset;
+    if (len &lt; used)
+        used = len;
+
+    /* Do we have urgent data here? */
+    if (tp-&gt;urg_data) {
+        u32 urg_offset = tp-&gt;urg_seq - *seq;
+        if (urg_offset &lt; used) {
+            if (!urg_offset) {
+                if (!sock_flag(sk, SOCK_URGINLINE)) {
+                    ++*seq;
+                    offset++;
+                    used--;
+                    if (!used)
+                        goto skip_copy;
+                }
+            } else
+                used = urg_offset;
+        }
+    }
+
+    if (!(flags &amp; MSG_TRUNC)) {</code></pre><p>#ifdef CONFIG_NET_DMA<br>            if (!tp-&gt;ucopy.dma_chan &amp;&amp; tp-&gt;ucopy.pinned_list)<br>                tp-&gt;ucopy.dma_chan = get_softnet_dma();</p>
+<pre><code>if (tp-&gt;ucopy.dma_chan) {
+    tp-&gt;ucopy.dma_cookie = dma_skb_copy_datagram_iovec(
+        tp-&gt;ucopy.dma_chan, skb, offset,
+        msg-&gt;msg_iov, used,
+        tp-&gt;ucopy.pinned_list);
+
+    if (tp-&gt;ucopy.dma_cookie &lt; 0) {
+
+        printk(KERN_ALERT &quot;dma_cookie &lt; 0\n&quot;);
+
+        /* Exception. Bailout! */
+        if (!copied)
+            copied = -EFAULT;
+        break;
+    }
+    if ((offset + used) == skb-&gt;len)
+        copied_early = 1;
+
+} else</code></pre><p>#endif<br>            {<br>                err = skb_copy_datagram_iovec(skb, offset,<br>                        msg-&gt;msg_iov, used);<br>                if (err) {<br>                    /* Exception. Bailout! */<br>                    if (!copied)<br>                        copied = -EFAULT;<br>                    break;<br>                }<br>            }<br>        }</p>
+<pre><code>*seq += used;
+copied += used;
+len -= used;
+
+tcp_rcv_space_adjust(sk);</code></pre><p>skip_copy:<br>        if (tp-&gt;urg_data &amp;&amp; after(tp-&gt;copied_seq, tp-&gt;urg_seq)) {<br>            tp-&gt;urg_data = 0;<br>            tcp_fast_path_check(sk);<br>        }<br>        if (used + offset &lt; skb-&gt;len)<br>            continue;</p>
+<pre><code>    if (tcp_hdr(skb)-&gt;fin)
+        goto found_fin_ok;
+    if (!(flags &amp; MSG_PEEK)) {
+        sk_eat_skb(sk, skb, copied_early);
+        copied_early = 0;
+    }
+    continue;
+
+found_fin_ok:
+    /* Process the FIN. */
+    ++*seq;
+    if (!(flags &amp; MSG_PEEK)) {
+        sk_eat_skb(sk, skb, copied_early);
+        copied_early = 0;
+    }
+    break;
+} while (len &gt; 0);
+
+if (user_recv) {
+    if (!skb_queue_empty(&amp;tp-&gt;ucopy.prequeue)) {
+        int chunk;
+
+        tp-&gt;ucopy.len = copied &gt; 0 ? len : 0;
+
+        tcp_prequeue_process(sk);
+
+        if (copied &gt; 0 &amp;&amp; (chunk = len - tp-&gt;ucopy.len) != 0) {
+            NET_ADD_STATS_USER(LINUX_MIB_TCPDIRECTCOPYFROMPREQUEUE, chunk);
+            len -= chunk;
+            copied += chunk;
+        }
+    }
+
+    tp-&gt;ucopy.task = NULL;
+    tp-&gt;ucopy.len = 0;
+}</code></pre><p>#ifdef CONFIG_NET_DMA<br>    if (tp-&gt;ucopy.dma_chan) {<br>        dma_cookie_t done, used;</p>
+<pre><code>    dma_async_memcpy_issue_pending(tp-&gt;ucopy.dma_chan);
+
+    while (dma_async_memcpy_complete(tp-&gt;ucopy.dma_chan,
+                     tp-&gt;ucopy.dma_cookie, &amp;done,
+                     &amp;used) == DMA_IN_PROGRESS) {
+        /* do partial cleanup of sk_async_wait_queue */
+        while ((skb = skb_peek(&amp;sk-&gt;sk_async_wait_queue)) &amp;&amp;
+               (dma_async_is_complete(skb-&gt;dma_cookie, done,
+                          used) == DMA_SUCCESS)) {
+            __skb_dequeue(&amp;sk-&gt;sk_async_wait_queue);
+            kfree_skb(skb);
+        }
+    }
+
+    /* Safe to free early-copied skbs now */
+    __skb_queue_purge(&amp;sk-&gt;sk_async_wait_queue);
+    dma_chan_put(tp-&gt;ucopy.dma_chan);
+    tp-&gt;ucopy.dma_chan = NULL;
+}
+if (tp-&gt;ucopy.pinned_list) {
+    dma_unpin_iovec_pages(tp-&gt;ucopy.pinned_list);
+    tp-&gt;ucopy.pinned_list = NULL;
+}</code></pre><p>#endif</p>
+<pre><code>/* According to UNIX98, msg_name/msg_namelen are ignored
+ * on connected socket. I was just happy when found this 8) --ANK
+ */
+
+/* Clean up data we have read: This will do ACK frames. */
+tcp_cleanup_rbuf(sk, copied);
+
+TCP_CHECK_TIMER(sk);
+release_sock(sk);
+return copied;</code></pre><p>out:<br>    TCP_CHECK_TIMER(sk);<br>    release_sock(sk);<br>    return err;</p>
+<p>recv_urg:<br>    err = tcp_recv_urg(sk, timeo, msg, len, flags, addr_len);<br>    goto out;<br>}</p>
+<p>/* Clean up the receive buffer for full frames taken by the user,</p>
+<ul>
+<li>then send an ACK if necessary.  COPIED is the number of bytes</li>
+<li>tcp_recvmsg has given to the user so far, it speeds up the</li>
+<li>calculation of whether or not we must ACK for the sake of</li>
+<li>a window update.</li>
+<li>/<br>// rcv_nxt         下次接收的第一个请求<br>// u32 rcv_wup;   上次滑动窗口更新的 rcv_nxt /* rcv_nxt on last window update sent   */<br>void tcp_cleanup_rbuf(struct sock *sk, int copied)<br>{<br>  struct tcp_sock *tp = tcp_sk(sk);<br>  int time_to_ack = 0;</li>
+</ul>
+<p>#if TCP_DEBUG<br>    struct sk_buff *skb = skb_peek(&amp;sk-&gt;sk_receive_queue);</p>
+<pre><code>BUG_TRAP(!skb || before(tp-&gt;copied_seq, TCP_SKB_CB(skb)-&gt;end_seq));</code></pre><p>#endif<br>    // 有ack需要发送<br>    if (inet_csk_ack_scheduled(sk)) {<br>        const struct inet_connection_sock <em>icsk = inet_csk(sk);<br>           /</em> Delayed ACKs frequently hit locked sockets during bulk<br>            * receive. <em>/<br>        // 之前有Delayed ACK被用户进程阻塞了<br>        if (icsk-&gt;icsk_ack.blocked ||<br>            /</em> Once-per-two-segments ACK was not sent by tcp_input.c <em>/<br>            tp-&gt;rcv_nxt - tp-&gt;rcv_wup &gt; icsk-&gt;icsk_ack.rcv_mss ||<br>            /</em><br>             * If this read emptied read buffer, we send ACK, if<br>             * connection is not bidirectional, user drained<br>             * receive buffer and there was a small segment<br>             * in queue.<br>             */<br>            (copied &gt; 0 &amp;&amp;<br>             ((icsk-&gt;icsk_ack.pending &amp; ICSK_ACK_PUSHED2) ||<br>              ((icsk-&gt;icsk_ack.pending &amp; ICSK_ACK_PUSHED) &amp;&amp;<br>               !icsk-&gt;icsk_ack.pingpong)) &amp;&amp;<br>              !atomic_read(&amp;sk-&gt;sk_rmem_alloc)))<br>            // ？？<br>            time_to_ack = 1;<br>    }</p>
+<pre><code>/* We send an ACK if we can now advertise a non-zero window
+ * which has been raised &quot;significantly&quot;.
+ *
+ * Even if window raised up to infinity, do not send window open ACK
+ * in states, where we will not receive more. It is useless.
+ */
+if (copied &gt; 0 &amp;&amp; !time_to_ack &amp;&amp; !(sk-&gt;sk_shutdown &amp; RCV_SHUTDOWN)) {
+    // 滑动窗口剩余大小
+    __u32 rcv_window_now = tcp_receive_window(tp);
+
+    /* Optimize, __tcp_select_window() is not cheap. */
+    // 剩余窗口大小小于滑动窗口的最大值的一半
+    if (2*rcv_window_now &lt;= tp-&gt;window_clamp) {
+        // ??
+        __u32 new_window = __tcp_select_window(sk);
+
+        /* Send ACK now, if this read freed lots of space
+         * in our buffer. Certainly, new_window is new window.
+         * We can advertise it now, if it is not less than current one.
+         * &quot;Lots&quot; means &quot;at least twice&quot; here.
+         */
+        if (new_window &amp;&amp; new_window &gt;= 2 * rcv_window_now)
+            time_to_ack = 1;
+    }
+}
+if (time_to_ack)
+    tcp_send_ack(sk);</code></pre><p>}</p>
+<p>/* The socket must have it’s spinlock held when we get</p>
+<ul>
+<li><p>here.</p>
+</li>
+<li></li>
+<li><p>We have a potential double-lock case here, so even when</p>
+</li>
+<li><p>doing backlog processing we use the BH locking scheme.</p>
+</li>
+<li><p>This is because we cannot sleep with the original spinlock</p>
+</li>
+<li><p>held.</p>
+</li>
+<li><p>/<br>int tcp_v4_do_rcv(struct sock <em>sk, struct sk_buff *skb)<br>{<br>  struct sock *rsk;<br>#ifdef CONFIG_TCP_MD5SIG<br>  /</em></p>
+<ul>
+<li><p>We really want to reject the packet as early as possible</p>
+</li>
+<li><p>if:</p>
+</li>
+<li><p>o We’re expecting an MD5’d packet and this is no MD5 tcp option</p>
+</li>
+<li><p>o There is an MD5 option and we’re not expecting one</p>
+</li>
+<li><p>/<br>if (tcp_v4_inbound_md5_hash(sk, skb))<br>  goto discard;<br>#endif</p>
+<p>if (sk-&gt;sk_state == TCP_ESTABLISHED) { /* Fast path */<br>  TCP_CHECK_TIMER(sk);<br>  if (tcp_rcv_established(sk, skb, tcp_hdr(skb), skb-&gt;len)) {</p>
+<pre><code>rsk = sk;
+goto reset;</code></pre><p>  }<br>  TCP_CHECK_TIMER(sk);<br>  return 0;<br>}</p>
+<p>if (skb-&gt;len &lt; tcp_hdrlen(skb) || tcp_checksum_complete(skb))<br>  goto csum_err;</p>
+<p>if (sk-&gt;sk_state == TCP_LISTEN) {<br>  struct sock *nsk = tcp_v4_hnd_req(sk, skb);<br>  if (!nsk)</p>
+<pre><code>goto discard;</code></pre><p>  if (nsk != sk) {</p>
+<pre><code>if (tcp_child_process(sk, nsk, skb)) {
+    rsk = nsk;
+    goto reset;
+}
+return 0;</code></pre><p>  }<br>}</p>
+<p>TCP_CHECK_TIMER(sk);<br>if (tcp_rcv_state_process(sk, skb, tcp_hdr(skb), skb-&gt;len)) {<br>  rsk = sk;<br>  goto reset;<br>}<br>TCP_CHECK_TIMER(sk);<br>return 0;</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>reset:<br>    tcp_v4_send_reset(rsk, skb);<br>discard:<br>    kfree_skb(skb);<br>    /* Be careful here. If this function gets more complicated and<br>     * gcc suffers from register pressure on the x86, sk (in %ebx)<br>     * might be destroyed here. This current version compiles correctly,<br>     * but you have been warned.<br>     */<br>    return 0;</p>
+<p>csum_err:<br>    TCP_INC_STATS_BH(TCP_MIB_INERRS);<br>    goto discard;<br>}</p>
+<p>/*</p>
+<ul>
+<li><p>TCP receive function for the ESTABLISHED state.</p>
+</li>
+<li></li>
+<li><p>It is split into a fast path and a slow path. The fast path is</p>
+</li>
+<li><p>disabled when:</p>
+</li>
+<li><ul>
+<li>A zero window was announced from us - zero window probing</li>
+</ul>
+</li>
+<li><p>is only handled properly in the slow path.</p>
+</li>
+<li><ul>
+<li>Out of order segments arrived.</li>
+</ul>
+</li>
+<li><ul>
+<li>Urgent data is expected.</li>
+</ul>
+</li>
+<li><ul>
+<li>There is no buffer space left</li>
+</ul>
+</li>
+<li><ul>
+<li>Unexpected TCP flags/window values/header lengths are received</li>
+</ul>
+</li>
+<li><p>(detected by checking the TCP header against pred_flags)</p>
+</li>
+<li><ul>
+<li>Data is sent in both directions. Fast path only supports pure senders</li>
+</ul>
+</li>
+<li><p>or pure receivers (this means either the sequence number or the ack</p>
+</li>
+<li><p>value must stay constant)</p>
+</li>
+<li><ul>
+<li>Unexpected TCP option.</li>
+</ul>
+</li>
+<li></li>
+<li><p>When these conditions are not satisfied it drops into a standard</p>
+</li>
+<li><p>receive procedure patterned after RFC793 to handle all cases.</p>
+</li>
+<li><p>The first three cases are guaranteed by proper pred_flags setting,</p>
+</li>
+<li><p>the rest is checked inline. Fast processing is turned on in</p>
+</li>
+<li><p>tcp_data_queue when everything is OK.</p>
+</li>
+<li><p>/<br>int tcp_rcv_established(struct sock *sk, struct sk_buff *skb,</p>
+<pre><code>struct tcphdr *th, unsigned len)</code></pre><p>{<br>  struct tcp_sock *tp = tcp_sk(sk);</p>
+<p>  /*</p>
+<ul>
+<li><p>Header prediction.</p>
+</li>
+<li><p>The code loosely follows the one in the famous</p>
+</li>
+<li><p>“30 instruction TCP receive” Van Jacobson mail.</p>
+</li>
+<li></li>
+<li><p>Van’s trick is to deposit buffers into socket queue</p>
+</li>
+<li><p>on a device interrupt, to call tcp_recv function</p>
+</li>
+<li><p>on the receive process context and checksum and copy</p>
+</li>
+<li><p>the buffer to user space. smart…</p>
+</li>
+<li></li>
+<li><p>Our current scheme is not silly either but we take the</p>
+</li>
+<li><p>extra cost of the net_bh soft interrupt processing…</p>
+</li>
+<li><p>We do checksum and copy also but from device to kernel.</p>
+</li>
+<li><p>/</p>
+<p>tp-&gt;rx_opt.saw_tstamp = 0;</p>
+<p>/*    pred_flags is 0xS?10 &lt;&lt; 16 + snd_wnd</p>
+</li>
+<li><p>if header_prediction is to be made</p>
+</li>
+<li><p>‘S’ will always be tp-&gt;tcp_header_len &gt;&gt; 2</p>
+</li>
+<li><p>‘?’ will be 0 for the fast path, otherwise pred_flags is 0 to</p>
+</li>
+<li><p>turn it off    (when there are holes in the receive</p>
+</li>
+<li><p>space for instance)</p>
+</li>
+<li><p>PSH flag is ignored.</p>
+</li>
+<li><p>/</p>
+<p>if ((tcp_flag_word(th) &amp; TCP_HP_BITS) == tp-&gt;pred_flags &amp;&amp;<br>  TCP_SKB_CB(skb)-&gt;seq == tp-&gt;rcv_nxt) {<br>  int tcp_header_len = tp-&gt;tcp_header_len;</p>
+<p>  /* Timestamp header prediction: tcp_header_len</p>
+<ul>
+<li><p>is automatically equal to th-&gt;doff*4 due to pred_flags</p>
+</li>
+<li><p>match.</p>
+</li>
+<li><p>/</p>
+<p>/* Check timestamp */<br>if (tcp_header_len == sizeof(struct tcphdr) + TCPOLEN_TSTAMP_ALIGNED) {<br>  <strong>be32 *ptr = (</strong>be32 *)(th + 1);</p>
+<p>  /* No? Slow path! <em>/<br>  if (</em>ptr != htonl((TCPOPT_NOP &lt;&lt; 24) | (TCPOPT_NOP &lt;&lt; 16)</p>
+<pre><code>      | (TCPOPT_TIMESTAMP &lt;&lt; 8) | TCPOLEN_TIMESTAMP))
+goto slow_path;</code></pre><p>  tp-&gt;rx_opt.saw_tstamp = 1;<br>  ++ptr;<br>  tp-&gt;rx_opt.rcv_tsval = ntohl(<em>ptr);<br>  ++ptr;<br>  tp-&gt;rx_opt.rcv_tsecr = ntohl(</em>ptr);</p>
+<p>  /* If PAWS failed, check it more carefully in slow path */<br>  if ((s32)(tp-&gt;rx_opt.rcv_tsval - tp-&gt;rx_opt.ts_recent) &lt; 0)</p>
+<pre><code>goto slow_path;</code></pre><p>  /* DO NOT update ts_recent here, if checksum fails</p>
+<ul>
+<li>and timestamp was corrupted part, it will result</li>
+<li>in a hung connection since we will drop all</li>
+<li>future packets due to the PAWS test.</li>
+<li>/<br>}</li>
+</ul>
+<p>if (len &lt;= tcp_header_len) {<br>  /* Bulk data transfer: sender */<br>  if (len == tcp_header_len) {</p>
+<pre><code>/* Predicted packet is in window by definition.
+ * seq == rcv_nxt and rcv_wup &lt;= rcv_nxt.
+ * Hence, check seq&lt;=rcv_wup reduces to:
+ */
+if (tcp_header_len ==
+    (sizeof(struct tcphdr) + TCPOLEN_TSTAMP_ALIGNED) &amp;&amp;
+    tp-&gt;rcv_nxt == tp-&gt;rcv_wup)
+    tcp_store_ts_recent(tp);
+
+/* We know that such packets are checksummed
+ * on entry.
+ */
+tcp_ack(sk, skb, 0);
+__kfree_skb(skb);
+tcp_data_snd_check(sk);
+return 0;</code></pre><p>  } else { /* Header too small */</p>
+<pre><code>TCP_INC_STATS_BH(TCP_MIB_INERRS);
+goto discard;</code></pre><p>  }<br>} else {<br>  int eaten = 0;<br>  int copied_early = 0;</p>
+<p>  if (tp-&gt;copied_seq == tp-&gt;rcv_nxt &amp;&amp;</p>
+<pre><code>len - tcp_header_len &lt;= tp-&gt;ucopy.len) {</code></pre><p>#ifdef CONFIG_NET_DMA</p>
+<pre><code>if (tcp_dma_try_early_copy(sk, skb, tcp_header_len)) {
+    copied_early = 1;
+    eaten = 1;
+}</code></pre><p>#endif</p>
+<pre><code>if (tp-&gt;ucopy.task == current &amp;&amp; sock_owned_by_user(sk) &amp;&amp; !copied_early) {
+    __set_current_state(TASK_RUNNING);
+
+    if (!tcp_copy_to_iovec(sk, skb, tcp_header_len))
+        eaten = 1;
+}
+if (eaten) {
+    /* Predicted packet is in window by definition.
+     * seq == rcv_nxt and rcv_wup &lt;= rcv_nxt.
+     * Hence, check seq&lt;=rcv_wup reduces to:
+     */
+    if (tcp_header_len ==
+        (sizeof(struct tcphdr) +
+         TCPOLEN_TSTAMP_ALIGNED) &amp;&amp;
+        tp-&gt;rcv_nxt == tp-&gt;rcv_wup)
+        tcp_store_ts_recent(tp);
+
+    tcp_rcv_rtt_measure_ts(sk, skb);
+
+    __skb_pull(skb, tcp_header_len);
+    tp-&gt;rcv_nxt = TCP_SKB_CB(skb)-&gt;end_seq;
+    NET_INC_STATS_BH(LINUX_MIB_TCPHPHITSTOUSER);
+}
+if (copied_early)
+    tcp_cleanup_rbuf(sk, skb-&gt;len);</code></pre><p>  }<br>  if (!eaten) {</p>
+<pre><code>if (tcp_checksum_complete_user(sk, skb))
+    goto csum_error;
+
+/* Predicted packet is in window by definition.
+ * seq == rcv_nxt and rcv_wup &lt;= rcv_nxt.
+ * Hence, check seq&lt;=rcv_wup reduces to:
+ */
+if (tcp_header_len ==
+    (sizeof(struct tcphdr) + TCPOLEN_TSTAMP_ALIGNED) &amp;&amp;
+    tp-&gt;rcv_nxt == tp-&gt;rcv_wup)
+    tcp_store_ts_recent(tp);
+
+tcp_rcv_rtt_measure_ts(sk, skb);
+
+if ((int)skb-&gt;truesize &gt; sk-&gt;sk_forward_alloc)
+    goto step5;
+
+NET_INC_STATS_BH(LINUX_MIB_TCPHPHITS);
+
+/* Bulk data transfer: receiver */
+__skb_pull(skb,tcp_header_len);
+__skb_queue_tail(&amp;sk-&gt;sk_receive_queue, skb);
+sk_stream_set_owner_r(skb, sk);
+tp-&gt;rcv_nxt = TCP_SKB_CB(skb)-&gt;end_seq;</code></pre><p>  }</p>
+<p>  tcp_event_data_recv(sk, skb);</p>
+<p>  if (TCP_SKB_CB(skb)-&gt;ack_seq != tp-&gt;snd_una) {</p>
+<pre><code>/* Well, only one small jumplet in fast path... */
+tcp_ack(sk, skb, FLAG_DATA);
+tcp_data_snd_check(sk);
+if (!inet_csk_ack_scheduled(sk))
+    goto no_ack;</code></pre><p>  }</p>
+<p>  __tcp_ack_snd_check(sk, 0);<br>no_ack:<br>#ifdef CONFIG_NET_DMA<br>  if (copied_early)</p>
+<pre><code>__skb_queue_tail(&amp;sk-&gt;sk_async_wait_queue, skb);</code></pre><p>  else<br>#endif<br>  if (eaten)</p>
+<pre><code>__kfree_skb(skb);</code></pre><p>  else</p>
+<pre><code>sk-&gt;sk_data_ready(sk, 0);</code></pre><p>  return 0;<br>}<br>}</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>slow_path:<br>    if (len &lt; (th-&gt;doff&lt;&lt;2) || tcp_checksum_complete_user(sk, skb))<br>        goto csum_error;</p>
+<pre><code>/*
+ * RFC1323: H1. Apply PAWS check first.
+ */
+if (tcp_fast_parse_options(skb, th, tp) &amp;&amp; tp-&gt;rx_opt.saw_tstamp &amp;&amp;
+    tcp_paws_discard(sk, skb)) {
+    if (!th-&gt;rst) {
+        NET_INC_STATS_BH(LINUX_MIB_PAWSESTABREJECTED);
+        tcp_send_dupack(sk, skb);
+        goto discard;
+    }
+    /* Resets are accepted even if PAWS failed.
+
+       ts_recent update must be made after we are sure
+       that the packet is in window.
+     */
+}
+
+/*
+ *    Standard slow path.
+ */
+
+if (!tcp_sequence(tp, TCP_SKB_CB(skb)-&gt;seq, TCP_SKB_CB(skb)-&gt;end_seq)) {
+    /* RFC793, page 37: &quot;In all states except SYN-SENT, all reset
+     * (RST) segments are validated by checking their SEQ-fields.&quot;
+     * And page 69: &quot;If an incoming segment is not acceptable,
+     * an acknowledgment should be sent in reply (unless the RST bit
+     * is set, if so drop the segment and return)&quot;.
+     */
+    if (!th-&gt;rst)
+        tcp_send_dupack(sk, skb);
+    goto discard;
+}
+
+if (th-&gt;rst) {
+    tcp_reset(sk);
+    goto discard;
+}
+
+tcp_replace_ts_recent(tp, TCP_SKB_CB(skb)-&gt;seq);
+
+if (th-&gt;syn &amp;&amp; !before(TCP_SKB_CB(skb)-&gt;seq, tp-&gt;rcv_nxt)) {
+    TCP_INC_STATS_BH(TCP_MIB_INERRS);
+    NET_INC_STATS_BH(LINUX_MIB_TCPABORTONSYN);
+    tcp_reset(sk);
+    return 1;
+}</code></pre><p>step5:<br>    if (th-&gt;ack)<br>        tcp_ack(sk, skb, FLAG_SLOWPATH);</p>
+<pre><code>tcp_rcv_rtt_measure_ts(sk, skb);
+
+/* Process urgent data. */
+tcp_urg(sk, skb, th);
+
+/* step 7: process the segment text */
+tcp_data_queue(sk, skb);
+
+tcp_data_snd_check(sk);
+tcp_ack_snd_check(sk);
+return 0;</code></pre><p>csum_error:<br>    TCP_INC_STATS_BH(TCP_MIB_INERRS);</p>
+<p>discard:<br>    __kfree_skb(skb);<br>    return 0;<br>}</p>
+<p>static int tcp_copy_to_iovec(struct sock *sk, struct sk_buff *skb, int hlen)<br>{<br>    struct tcp_sock *tp = tcp_sk(sk);<br>    int chunk = skb-&gt;len - hlen;<br>    int err; </p>
+<pre><code>local_bh_enable();
+if (skb_csum_unnecessary(skb))
+    err = skb_copy_datagram_iovec(skb, hlen, tp-&gt;ucopy.iov, chunk);
+else 
+    err = skb_copy_and_csum_datagram_iovec(skb, hlen,
+                           tp-&gt;ucopy.iov);
+
+if (!err) {
+    tp-&gt;ucopy.len -= chunk;
+    tp-&gt;copied_seq += chunk;
+    tcp_rcv_space_adjust(sk);
+}
+
+local_bh_disable();
+return err; </code></pre><p>}</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/04/spring/spring aop 组织顺序源码分析/" rel="next" title=".spring?aop?组织顺序源码分析">
+                <i class="fa fa-chevron-left"></i> .spring?aop?组织顺序源码分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/04/分布式一致性/raft 选主和paxos/" rel="prev" title>
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="mesos 源码分析-slave recoveryslave recovery相关参数   配置 说明    strict 如果strict=true,任何recovery错误都会导致agent启动失败,如果strict=false,启动时的错误会被忽略,以便尽可能的恢复运行状态   reconfiguration_policy 如果时equal,启动选项和重启前要严格一致,如果是additive">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".mesos源码分析-slave?recovery">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/devops/mesos/mesos源码分析-slave recovery/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="mesos 源码分析-slave recoveryslave recovery相关参数   配置 说明    strict 如果strict=true,任何recovery错误都会导致agent启动失败,如果strict=false,启动时的错误会被忽略,以便尽可能的恢复运行状态   reconfiguration_policy 如果时equal,启动选项和重启前要严格一致,如果是additive">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-04T03:11:15.937Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".mesos源码分析-slave?recovery">
+<meta name="twitter:description" content="mesos 源码分析-slave recoveryslave recovery相关参数   配置 说明    strict 如果strict=true,任何recovery错误都会导致agent启动失败,如果strict=false,启动时的错误会被忽略,以便尽可能的恢复运行状态   reconfiguration_policy 如果时equal,启动选项和重启前要严格一致,如果是additive">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/devops/mesos/mesos源码分析-slave recovery/">
+
+
+
+
+
+  <title>.mesos源码分析-slave?recovery | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/devops/mesos/mesos源码分析-slave recovery/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">.mesos源码分析-slave?recovery</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="mesos-源码分析-slave-recovery"><a href="#mesos-源码分析-slave-recovery" class="headerlink" title="mesos 源码分析-slave recovery"></a>mesos 源码分析-slave recovery</h1><h2 id="slave-recovery"><a href="#slave-recovery" class="headerlink" title="slave recovery"></a>slave recovery</h2><h3 id="相关参数"><a href="#相关参数" class="headerlink" title="相关参数"></a>相关参数</h3><table>
+<thead>
+<tr>
+<th align="center">配置</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">strict</td>
+<td align="center">如果strict=true,任何recovery错误都会导致agent启动失败,如果strict=false,启动时的错误会被忽略,以便尽可能的恢复运行状态</td>
+</tr>
+<tr>
+<td align="center">reconfiguration_policy</td>
+<td align="center">如果时equal,启动选项和重启前要严格一致,如果是additive,允许增加资源或者属性</td>
+</tr>
+<tr>
+<td align="center">recover</td>
+<td align="center">如果时reconnect,允许任何executors重连,如果是clean,会直接kill之前的executor</td>
+</tr>
+<tr>
+<td align="center">recovery_timeout</td>
+<td align="center">如果agent 恢复时间超过recovery_timeout,任何executors会self-terminate. 还不清楚executor有没有回调</td>
+</tr>
+</tbody></table>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p>Slave 启动时在初始化阶段恢复之前executor和task的信息和状态</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Slave::initialize()</span><br><span class="line">&#123;</span><br><span class="line">      <span class="comment">// Do recovery.</span></span><br><span class="line">  async(&amp;state::recover, metaDir, flags.strict)</span><br><span class="line">    .then(defer(self(), &amp;Slave::recover, lambda::_1))</span><br><span class="line">    .then(defer(self(), &amp;Slave::_recover))</span><br><span class="line">    .onAny(defer(self(), &amp;Slave::__recover, lambda::_1));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>recover: 遍历root目录下的文件,找到executor和task的信息,同时发送之前未发送成功的消息<br>_recover: 如果recover的状态是”reconnect”,恢复executor,清除一定延时内没有恢复的executor.<br>__recover: 清楚之前slave的meta的数据,重新连接master,但是在ping超时后也没有shutdown.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">  ```cpp</span><br><span class="line">  Future&lt;Nothing&gt; TaskStatusUpdateManagerProcess::recover(</span><br><span class="line">    <span class="keyword">const</span> <span class="built_in">string</span>&amp; rootDir,</span><br><span class="line">    <span class="keyword">const</span> Option&lt;SlaveState&gt;&amp; state)</span><br><span class="line">&#123;</span><br><span class="line">  LOG(INFO) &lt;&lt; <span class="string">"Recovering task status update manager"</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (state.isNone()) &#123;</span><br><span class="line">    <span class="keyword">return</span> Nothing();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  foreachvalue (<span class="keyword">const</span> FrameworkState&amp; framework, state-&gt;frameworks) &#123;</span><br><span class="line">    foreachvalue (<span class="keyword">const</span> ExecutorState&amp; executor, framework.executors) &#123;</span><br><span class="line">      LOG(INFO) &lt;&lt; <span class="string">"Recovering executor '"</span> &lt;&lt; executor.id</span><br><span class="line">                &lt;&lt; <span class="string">"' of framework "</span> &lt;&lt; framework.id;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (executor.info.isNone()) &#123;</span><br><span class="line">        LOG(WARNING) &lt;&lt; <span class="string">"Skipping recovering task status updates of"</span></span><br><span class="line">                     &lt;&lt; <span class="string">" executor '"</span> &lt;&lt; executor.id</span><br><span class="line">                     &lt;&lt; <span class="string">"' of framework "</span> &lt;&lt; framework.id</span><br><span class="line">                     &lt;&lt; <span class="string">" because its info cannot be recovered"</span>;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (executor.latest.isNone()) &#123;</span><br><span class="line">        LOG(WARNING) &lt;&lt; <span class="string">"Skipping recovering task status updates of"</span></span><br><span class="line">                     &lt;&lt; <span class="string">" executor '"</span> &lt;&lt; executor.id</span><br><span class="line">                     &lt;&lt; <span class="string">"' of framework "</span> &lt;&lt; framework.id</span><br><span class="line">                     &lt;&lt; <span class="string">" because its latest run cannot be recovered"</span>;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// We are only interested in the latest run of the executor!</span></span><br><span class="line">      <span class="keyword">const</span> ContainerID&amp; latest = executor.latest.get();</span><br><span class="line">      Option&lt;RunState&gt; run = executor.runs.get(latest);</span><br><span class="line">      CHECK_SOME(run);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (run-&gt;completed) &#123;</span><br><span class="line">        VLOG(<span class="number">1</span>) &lt;&lt; <span class="string">"Skipping recovering task status updates of"</span></span><br><span class="line">                &lt;&lt; <span class="string">" executor '"</span> &lt;&lt; executor.id</span><br><span class="line">                &lt;&lt; <span class="string">"' of framework "</span> &lt;&lt; framework.id</span><br><span class="line">                &lt;&lt; <span class="string">" because its latest run "</span> &lt;&lt; latest.value()</span><br><span class="line">                &lt;&lt; <span class="string">" is completed"</span>;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      foreachvalue (<span class="keyword">const</span> TaskState&amp; task, run-&gt;tasks) &#123;</span><br><span class="line">        <span class="comment">// No updates were ever received for this task!</span></span><br><span class="line">        <span class="comment">// This means either:</span></span><br><span class="line">        <span class="comment">// 1) the executor never received this task or</span></span><br><span class="line">        <span class="comment">// 2) executor launched it but the slave died before it got any updates.</span></span><br><span class="line">        <span class="keyword">if</span> (task.updates.empty()) &#123;</span><br><span class="line">          LOG(WARNING) &lt;&lt; <span class="string">"No status updates found for task "</span> &lt;&lt; task.id</span><br><span class="line">                       &lt;&lt; <span class="string">" of framework "</span> &lt;&lt; framework.id;</span><br><span class="line">          <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Create a new status update stream.</span></span><br><span class="line">        TaskStatusUpdateStream* stream = createStatusUpdateStream(</span><br><span class="line">            task.id, framework.id, state-&gt;id, <span class="literal">true</span>, executor.id, latest);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Replay the stream.</span></span><br><span class="line">        Try&lt;Nothing&gt; replay = stream-&gt;replay(task.updates, task.acks);</span><br><span class="line">        <span class="keyword">if</span> (replay.isError()) &#123;</span><br><span class="line">          <span class="keyword">return</span> Failure(</span><br><span class="line">              <span class="string">"Failed to replay status updates for task "</span> + stringify(task.id) +</span><br><span class="line">              <span class="string">" of framework "</span> + stringify(framework.id) +</span><br><span class="line">              <span class="string">": "</span> + replay.error());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// At the end of the replay, the stream is either terminated or</span></span><br><span class="line">        <span class="comment">// contains only unacknowledged, if any, pending updates. The</span></span><br><span class="line">        <span class="comment">// pending updates will be flushed after the slave</span></span><br><span class="line">        <span class="comment">// reregisters with the master.</span></span><br><span class="line">        <span class="keyword">if</span> (stream-&gt;terminated) &#123;</span><br><span class="line">          cleanupStatusUpdateStream(task.id, framework.id);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> Nothing();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  slave在启动的时候检查work_dir,确定启动前的task\executor的信息. 保存在work_dir的meta 目录下</p>
+<p>  // We pause the task status update manager so that it doesn’t forward any<br>  // updates while the slave is still recovering. It is unpaused/resumed when<br>  // the slave (re-)registers with the master.<br>  taskStatusUpdateManager-&gt;pause();</p>
+<pre><code>// Do recovery.</code></pre><p>  async(&amp;state::recover, metaDir, flags.strict)<br>    .then(defer(self(), &amp;Slave::recover, lambda::_1))<br>    .then(defer(self(), &amp;Slave::_recover))<br>    .onAny(defer(self(), &amp;Slave::__recover, lambda::_1));</p>
+<pre><code>message Task {
+  required string name = 1;
+  required TaskID id = 2;
+  repeated Resource resources = 3;
+  optional Labels labels = 4;
+}
+
+message StatusUpdateRecord {</code></pre><p>  enum Type {<br>    UPDATE = 0;<br>    ACK = 1;<br>  }</p>
+<p>  required Type type = 1;</p>
+<p>  // Required if type == UPDATE.<br>  optional StatusUpdate update = 2;</p>
+<p>  // Required if type == ACK.<br>  optional bytes uuid = 3;<br>}</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/04/devops/mesos/mesos 源码分析-master和slave的通信/" rel="next" title=".mesos?源码分析-master和slave的通信">
+                <i class="fa fa-chevron-left"></i> .mesos?源码分析-master和slave的通信
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/04/devops/mesos/mesos源码分析-slave注册/" rel="prev" title=".mesos源码分析-slave注册">
+                .mesos源码分析-slave注册 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mesos-源码分析-slave-recovery"><span class="nav-number">1.</span> <span class="nav-text">mesos 源码分析-slave recovery</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slave-recovery"><span class="nav-number">1.1.</span> <span class="nav-text">slave recovery</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关参数"><span class="nav-number">1.1.1.</span> <span class="nav-text">相关参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流程"><span class="nav-number">1.1.2.</span> <span class="nav-text">流程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="upstream## 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".upstream">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/nginx/upstream/index.html">
+<meta property="og:site_name" content="lxm798">
+<meta property="og:description" content="upstream## 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-04T03:11:16.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".upstream">
+<meta name="twitter:description" content="upstream## 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/nginx/upstream/">
+
+
+
+
+
+  <title>.upstream | lxm798</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">lxm798</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/nginx/upstream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">.upstream</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="upstream"><a href="#upstream" class="headerlink" title="upstream"></a>upstream</h1><p>##</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">ngx_http_upstream_send_request(<span class="keyword">ngx_http_request_t</span> *r, <span class="keyword">ngx_http_upstream_t</span> *u,</span><br><span class="line">    <span class="keyword">ngx_uint_t</span> do_write)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">ngx_int_t</span>          rc;</span><br><span class="line">    <span class="keyword">ngx_connection_t</span>  *c;</span><br><span class="line"></span><br><span class="line">    c = u-&gt;peer.connection;</span><br><span class="line"></span><br><span class="line">    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, c-&gt;<span class="built_in">log</span>, <span class="number">0</span>,</span><br><span class="line">                   <span class="string">"http upstream send request"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (u-&gt;state-&gt;connect_time == (<span class="keyword">ngx_msec_t</span>) <span class="number">-1</span>) &#123;</span><br><span class="line">        u-&gt;state-&gt;connect_time = ngx_current_msec - u-&gt;start_time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!u-&gt;request_sent &amp;&amp; ngx_http_upstream_test_connect(c) != NGX_OK) &#123;</span><br><span class="line">        ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR);   <span class="comment">// ???</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    c-&gt;<span class="built_in">log</span>-&gt;action = <span class="string">"sending request to upstream"</span>;</span><br><span class="line">    <span class="comment">// 发送r中buf到u中</span></span><br><span class="line">    rc = ngx_http_upstream_send_request_body(r, u, do_write);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (rc == NGX_ERROR) &#123;</span><br><span class="line">        ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (rc &gt;= NGX_HTTP_SPECIAL_RESPONSE) &#123;</span><br><span class="line">        ngx_http_upstream_finalize_request(r, u, rc);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (rc == NGX_AGAIN) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!c-&gt;write-&gt;ready || u-&gt;request_body_blocked) &#123;</span><br><span class="line">            ngx_add_timer(c-&gt;write, u-&gt;conf-&gt;send_timeout);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (c-&gt;write-&gt;timer_set) &#123;</span><br><span class="line">            ngx_del_timer(c-&gt;write);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (ngx_handle_write_event(c-&gt;write, u-&gt;conf-&gt;send_lowat) != NGX_OK) &#123;</span><br><span class="line">            ngx_http_upstream_finalize_request(r, u,</span><br><span class="line">                                               NGX_HTTP_INTERNAL_SERVER_ERROR);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (c-&gt;write-&gt;ready &amp;&amp; c-&gt;tcp_nopush == NGX_TCP_NOPUSH_SET) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ngx_tcp_push(c-&gt;fd) == <span class="number">-1</span>) &#123;</span><br><span class="line">                ngx_log_error(NGX_LOG_CRIT, c-&gt;<span class="built_in">log</span>, ngx_socket_errno,</span><br><span class="line">                              ngx_tcp_push_n <span class="string">" failed"</span>);</span><br><span class="line">                ngx_http_upstream_finalize_request(r, u,</span><br><span class="line">                                               NGX_HTTP_INTERNAL_SERVER_ERROR);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            c-&gt;tcp_nopush = NGX_TCP_NOPUSH_UNSET;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* rc == NGX_OK */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c-&gt;write-&gt;timer_set) &#123;</span><br><span class="line">        ngx_del_timer(c-&gt;write);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c-&gt;tcp_nopush == NGX_TCP_NOPUSH_SET) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ngx_tcp_push(c-&gt;fd) == <span class="number">-1</span>) &#123;</span><br><span class="line">            ngx_log_error(NGX_LOG_CRIT, c-&gt;<span class="built_in">log</span>, ngx_socket_errno,</span><br><span class="line">                          ngx_tcp_push_n <span class="string">" failed"</span>);</span><br><span class="line">            ngx_http_upstream_finalize_request(r, u,</span><br><span class="line">                                               NGX_HTTP_INTERNAL_SERVER_ERROR);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        c-&gt;tcp_nopush = NGX_TCP_NOPUSH_UNSET;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!u-&gt;conf-&gt;preserve_output) &#123;</span><br><span class="line">        u-&gt;write_event_handler = ngx_http_upstream_dummy_handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ngx_handle_write_event(c-&gt;write, <span class="number">0</span>) != NGX_OK) &#123;</span><br><span class="line">        ngx_http_upstream_finalize_request(r, u,</span><br><span class="line">                                           NGX_HTTP_INTERNAL_SERVER_ERROR);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!u-&gt;request_body_sent) &#123;</span><br><span class="line">        u-&gt;request_body_sent = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (u-&gt;header_sent) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ngx_add_timer(c-&gt;read, u-&gt;conf-&gt;read_timeout);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (c-&gt;read-&gt;ready) &#123;</span><br><span class="line">            ngx_http_upstream_process_header(r, u);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">ngx_int_t</span></span><br><span class="line">ngx_http_upstream_send_request_body(<span class="keyword">ngx_http_request_t</span> *r,</span><br><span class="line">    <span class="keyword">ngx_http_upstream_t</span> *u, <span class="keyword">ngx_uint_t</span> do_write)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">ngx_int_t</span>                  rc;</span><br><span class="line">    <span class="keyword">ngx_chain_t</span>               *out, *cl, *ln;</span><br><span class="line">    <span class="keyword">ngx_connection_t</span>          *c;</span><br><span class="line">    <span class="keyword">ngx_http_core_loc_conf_t</span>  *clcf;</span><br><span class="line"></span><br><span class="line">    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r-&gt;connection-&gt;<span class="built_in">log</span>, <span class="number">0</span>,</span><br><span class="line">                   <span class="string">"http upstream send request body"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!r-&gt;request_body_no_buffering) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* buffered request body */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!u-&gt;request_sent) &#123;</span><br><span class="line">            u-&gt;request_sent = <span class="number">1</span>;</span><br><span class="line">            out = u-&gt;request_bufs;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            out = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        rc = ngx_output_chain(&amp;u-&gt;output, out);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (rc == NGX_AGAIN) &#123;</span><br><span class="line">            u-&gt;request_body_blocked = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            u-&gt;request_body_blocked = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> rc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!u-&gt;request_sent) &#123; <span class="comment">// 没有发送过数据</span></span><br><span class="line">        u-&gt;request_sent = <span class="number">1</span>;</span><br><span class="line">        out = u-&gt;request_bufs;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (r-&gt;request_body-&gt;bufs) &#123;</span><br><span class="line">            <span class="keyword">for</span> (cl = out; cl-&gt;next; cl = cl-&gt;next) &#123; <span class="comment">/* void */</span> &#125;</span><br><span class="line">            cl-&gt;next = r-&gt;request_body-&gt;bufs;</span><br><span class="line">            r-&gt;request_body-&gt;bufs = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        c = u-&gt;peer.connection;</span><br><span class="line">        clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (clcf-&gt;tcp_nodelay &amp;&amp; ngx_tcp_nodelay(c) != NGX_OK) &#123;</span><br><span class="line">            <span class="keyword">return</span> NGX_ERROR;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        r-&gt;read_event_handler = ngx_http_upstream_read_request_handler;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        out = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ( ;; ) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (do_write) &#123;</span><br><span class="line">            rc = ngx_output_chain(&amp;u-&gt;output, out);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (rc == NGX_ERROR) &#123;</span><br><span class="line">                <span class="keyword">return</span> NGX_ERROR;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (out) &#123;</span><br><span class="line">                ln = out;</span><br><span class="line">                out = out-&gt;next;</span><br><span class="line">                ngx_free_chain(r-&gt;pool, ln);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (rc == NGX_AGAIN) &#123;</span><br><span class="line">                u-&gt;request_body_blocked = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                u-&gt;request_body_blocked = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (rc == NGX_OK &amp;&amp; !r-&gt;reading_body) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (r-&gt;reading_body) &#123;</span><br><span class="line">            <span class="comment">/* read client request body */</span></span><br><span class="line"></span><br><span class="line">            rc = ngx_http_read_unbuffered_request_body(r);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (rc &gt;= NGX_HTTP_SPECIAL_RESPONSE) &#123;</span><br><span class="line">                <span class="keyword">return</span> rc;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            out = r-&gt;request_body-&gt;bufs;</span><br><span class="line">            r-&gt;request_body-&gt;bufs = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* stop if there is nothing to send */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (out == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            rc = NGX_AGAIN;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        do_write = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!r-&gt;reading_body) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!u-&gt;store &amp;&amp; !r-&gt;post_action &amp;&amp; !u-&gt;conf-&gt;ignore_client_abort) &#123;</span><br><span class="line">            r-&gt;read_event_handler =</span><br><span class="line">                                  ngx_http_upstream_rd_check_broken_connection;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/04/nginx/ds/request/" rel="next" title=".request">
+                <i class="fa fa-chevron-left"></i> .request
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/04/nginx/大纲/" rel="prev" title=".大纲">
+                .大纲 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#upstream"><span class="nav-number">1.</span> <span class="nav-text">upstream</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
