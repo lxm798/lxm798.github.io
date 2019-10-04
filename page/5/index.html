@@ -232,7 +232,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/pthread/pthread_mutex/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -358,7 +358,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/pthread/futex wakeup/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -477,7 +477,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/pthread/futex/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -609,7 +609,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/network/network/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -731,7 +731,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/数据结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -870,7 +870,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/task_group/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -1002,7 +1002,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/schedule/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -1141,132 +1141,10 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/introduce/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxm798">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/introduce/" itemprop="url">introduce</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Introduce"><a href="#Introduce" class="headerlink" title="Introduce"></a>Introduce</h1><p>linux的进程/线程调度总体依赖于task_entity,对于非实时任务采用cfs算法.每个task_entity有对应的vruntime用于记录运行时间,当占用cpu的时间超过当前最少的用户时,切换线程.<br>vruntime 受到用户静态优先级的限制,每个优先级的运行时间差1.25,可以用来增加cpu的比例,效果类似shares,可以分配同一个cgroup中不同进程使用的cpu的比例.</p>
-<h2 id="cgroup"><a href="#cgroup" class="headerlink" title="cgroup"></a>cgroup</h2><h3 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h3><p>cfs_period_us:<br>cfs_quota_us:<br>shares:<br>task_group</p>
-<h2 id="scheduler"><a href="#scheduler" class="headerlink" title="scheduler"></a>scheduler</h2><p>sched_entity<br>task_struct</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/fork/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -1397,10 +1275,132 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/introduce/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lxm798">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/introduce/" itemprop="url">introduce</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Introduce"><a href="#Introduce" class="headerlink" title="Introduce"></a>Introduce</h1><p>linux的进程/线程调度总体依赖于task_entity,对于非实时任务采用cfs算法.每个task_entity有对应的vruntime用于记录运行时间,当占用cpu的时间超过当前最少的用户时,切换线程.<br>vruntime 受到用户静态优先级的限制,每个优先级的运行时间差1.25,可以用来增加cpu的比例,效果类似shares,可以分配同一个cgroup中不同进程使用的cpu的比例.</p>
+<h2 id="cgroup"><a href="#cgroup" class="headerlink" title="cgroup"></a>cgroup</h2><h3 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h3><p>cfs_period_us:<br>cfs_quota_us:<br>shares:<br>task_group</p>
+<h2 id="scheduler"><a href="#scheduler" class="headerlink" title="scheduler"></a>scheduler</h2><p>sched_entity<br>task_struct</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/cpu/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="lxm798">
       <meta itemprop="description" content>
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
@@ -1557,7 +1557,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-author-name" itemprop="name">lxm798</p>
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
@@ -1613,7 +1613,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">lxm798</span>
 
   
 </div>
