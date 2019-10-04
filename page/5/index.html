@@ -229,137 +229,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/pthread/pthread 初始化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxm798">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/linux/pthread/pthread 初始化/" itemprop="url">.pthread?初始化</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="pthread-mutex"><a href="#pthread-mutex" class="headerlink" title="pthread_mutex"></a>pthread_mutex</h1><p>pthread_mutex_lock 在非多线程环境中默认直接返回0</p>
-<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FORWARD2(name, rettype, decl, params, defaction) \</span></span><br><span class="line">rettype                                       \        </span><br><span class="line">name decl                                     \        </span><br><span class="line">&#123;                                         \            </span><br><span class="line">  <span class="keyword">if</span> (!__libc_pthread_functions_init)                         \</span><br><span class="line">    defaction;                                    \    </span><br><span class="line">                                          \            </span><br><span class="line">  <span class="keyword">return</span> PTHFCT_CALL (ptr_##name, params);                    \</span><br><span class="line">&#125;                                                      </span><br><span class="line">                                                       </span><br><span class="line"><span class="comment">/* Same as FORWARD2, only without return.  */</span>          </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FORWARD_NORETURN(name, rettype, decl, params, defaction) \</span></span><br><span class="line">rettype                                       \        </span><br><span class="line">name decl                                     \        </span><br><span class="line">&#123;                                         \            </span><br><span class="line">  <span class="keyword">if</span> (!__libc_pthread_functions_init)                         \</span><br><span class="line">    defaction;                                    \    </span><br><span class="line">                                          \            </span><br><span class="line">  PTHFCT_CALL (ptr_##name, params);                       \</span><br><span class="line">&#125;                                                      </span><br><span class="line">                                                       </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FORWARD(name, decl, params, defretval) \       </span></span><br><span class="line">  FORWARD2 (name, <span class="keyword">int</span>, decl, params, <span class="keyword">return</span> defretval)</span><br><span class="line"></span><br><span class="line">FORWARD (pthread_attr_setscope, (<span class="keyword">pthread_attr_t</span> *attr, <span class="keyword">int</span> scope),</span><br><span class="line">     (attr, scope), <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<p>其中__libc_pthread_functions_init 在libpthread加载时赋值初始化</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">void __libc_pthread_init (unsigned long int *ptr, void (*reclaim) (void),</span><br><span class="line">             const struct pthread_functions *functions)                                                                                                                                                            </span><br><span class="line">&#123;       </span><br><span class="line">  /* Remember the pointer to the generation counter in libpthread.  */</span><br><span class="line">  __fork_generation_pointer = ptr;</span><br><span class="line">        </span><br><span class="line">  /* Called by a child after fork.  */</span><br><span class="line">  __register_atfork (NULL, NULL, reclaim, NULL);</span><br><span class="line">        </span><br><span class="line">#ifdef SHARED</span><br><span class="line">  /* Copy the function pointers into an array in libc.  This enables</span><br><span class="line">     access with just one memory reference but moreso, it prevents</span><br><span class="line">     hijacking the function pointers with just one pointer change.  We</span><br><span class="line">     &quot;encrypt&quot; the function pointers since we cannot write-protect the</span><br><span class="line">     array easily enough.  */</span><br><span class="line">  union ptrhack</span><br><span class="line">  &#123;     </span><br><span class="line">    struct pthread_functions pf;</span><br><span class="line"># define NPTRS (sizeof (struct pthread_functions) / sizeof (void *))</span><br><span class="line">    void *parr[NPTRS];</span><br><span class="line">  &#125; __attribute__ ((may_alias)) const *src;</span><br><span class="line">  union ptrhack *dest;</span><br><span class="line">        </span><br><span class="line">  src = (const void *) functions;</span><br><span class="line">  dest = (void *) &amp;__libc_pthread_functions;</span><br><span class="line">        </span><br><span class="line">  for (size_t cnt = 0; cnt &lt; NPTRS; ++cnt)</span><br><span class="line">    &#123;   </span><br><span class="line">      void *p = src-&gt;parr[cnt];</span><br><span class="line">      PTR_MANGLE (p);</span><br><span class="line">      dest-&gt;parr[cnt] = p;</span><br><span class="line">    &#125;   </span><br><span class="line">  __libc_pthread_functions_init = 1;</span><br><span class="line">#endif  </span><br><span class="line">        </span><br><span class="line">#ifndef TLS_MULTIPLE_THREADS_IN_TCB</span><br><span class="line">  return &amp;__libc_multiple_threads;</span><br><span class="line">#endif  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在段初始化时调用 __libc_pthread_init</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// ../sysdeps/x86_64/crti.S</span><br><span class="line">_init:         </span><br><span class="line">    /* Maintain 16-byte stack alignment for called functions.  */</span><br><span class="line">    subq $8, %rsp</span><br><span class="line">#if PREINIT_FUNCTION_WEAK</span><br><span class="line">    movq PREINIT_FUNCTION@GOTPCREL(%rip), %rax</span><br><span class="line">    testq %rax, %rax</span><br><span class="line">    je .Lno_weak_fn                                                                                                                                                                                                </span><br><span class="line">    call PREINIT_FUNCTION@PLT</span><br></pre></td></tr></table></figure>
-
-<p>其中PREINIT_FUNCTION定义为</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PREINIT_FUNCTION __pthread_initialize_minimal_internal</span></span><br></pre></td></tr></table></figure>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/pthread/pthread_mutex/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -379,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/pthread/pthread_mutex/" itemprop="url">.pthread_mutex</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/pthread/pthread_mutex/" itemprop="url">pthread_mutex</a></h1>
         
 
         <div class="post-meta">
@@ -391,7 +260,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -505,7 +374,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/pthread/futex wakeup/" itemprop="url">.futex?wakeup</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/pthread/futex wakeup/" itemprop="url">futex?wakeup</a></h1>
         
 
         <div class="post-meta">
@@ -517,7 +386,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -624,7 +493,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/pthread/futex/" itemprop="url">.futex</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/pthread/futex/" itemprop="url">futex</a></h1>
         
 
         <div class="post-meta">
@@ -636,7 +505,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -756,7 +625,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/network/network/" itemprop="url">.network</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/network/network/" itemprop="url">network</a></h1>
         
 
         <div class="post-meta">
@@ -768,7 +637,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -878,7 +747,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/数据结构/" itemprop="url">.数据结构</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/数据结构/" itemprop="url">数据结构</a></h1>
         
 
         <div class="post-meta">
@@ -890,7 +759,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1017,7 +886,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/task_group/" itemprop="url">.task_group</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/task_group/" itemprop="url">task_group</a></h1>
         
 
         <div class="post-meta">
@@ -1029,7 +898,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1149,7 +1018,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/schedule/" itemprop="url">.schedule</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/schedule/" itemprop="url">schedule</a></h1>
         
 
         <div class="post-meta">
@@ -1161,7 +1030,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1291,7 +1160,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/introduce/" itemprop="url">.introduce</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/introduce/" itemprop="url">introduce</a></h1>
         
 
         <div class="post-meta">
@@ -1303,7 +1172,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1413,7 +1282,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/linux/cgroup/fork/" itemprop="url">.fork</a></h1>
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/fork/" itemprop="url">fork</a></h1>
         
 
         <div class="post-meta">
@@ -1425,7 +1294,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1515,6 +1384,140 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/linux/cgroup/cpu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/04/linux/cgroup/cpu/" itemprop="url">cpu</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="cpu-cgroup"><a href="#cpu-cgroup" class="headerlink" title="cpu cgroup"></a>cpu cgroup</h1><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line">    <span class="comment">/* Control Group info protected by css_set_lock */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">css_set</span> __<span class="title">rcu</span> *<span class="title">cgroups</span>;</span></span><br><span class="line">	<span class="comment">/* cg_list protected by css_set_lock and tsk-&gt;alloc_lock */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">cg_list</span>;</span></span><br><span class="line">&#125;</span><br><span class="line">```	</span><br><span class="line">```c</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * A css_set is a structure holding pointers to a set of</span></span><br><span class="line"><span class="comment"> * cgroup_subsys_state objects. This saves space in the task struct</span></span><br><span class="line"><span class="comment"> * object and speeds up fork()/exit(), since a single inc/dec and a</span></span><br><span class="line"><span class="comment"> * list_add()/del() can bump the reference count on the entire cgroup</span></span><br><span class="line"><span class="comment"> * set for a task.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">css_set</span> &#123;</span></span><br><span class="line">	<span class="comment">/* Reference count */</span></span><br><span class="line">	<span class="keyword">atomic_t</span> refcount;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * List running through all cgroup groups in the same hash</span></span><br><span class="line"><span class="comment">	 * slot. Protected by css_set_lock</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">hlist_node</span> <span class="title">hlist</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Lists running through all tasks using this cgroup group.</span></span><br><span class="line"><span class="comment">	 * mg_tasks lists tasks which belong to this cset but are in the</span></span><br><span class="line"><span class="comment">	 * process of being migrated out or in.  Protected by</span></span><br><span class="line"><span class="comment">	 * css_set_rwsem, but, during migration, once tasks are moved to</span></span><br><span class="line"><span class="comment">	 * mg_tasks, it can be read safely while holding cgroup_mutex.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">tasks</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">mg_tasks</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * List of cgrp_cset_links pointing at cgroups referenced from this</span></span><br><span class="line"><span class="comment">	 * css_set.  Protected by css_set_lock.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">cgrp_links</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* the default cgroup associated with this css_set */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">dfl_cgrp</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Set of subsystem states, one for each subsystem. This array is</span></span><br><span class="line"><span class="comment">	 * immutable after creation apart from the init_css_set during</span></span><br><span class="line"><span class="comment">	 * subsystem registration (at boot time).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *<span class="title">subsys</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * List of csets participating in the on-going migration either as</span></span><br><span class="line"><span class="comment">	 * source or destination.  Protected by cgroup_mutex.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">mg_preload_node</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">mg_node</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * If this cset is acting as the source of migration the following</span></span><br><span class="line"><span class="comment">	 * two fields are set.  mg_src_cgrp is the source cgroup of the</span></span><br><span class="line"><span class="comment">	 * on-going migration and mg_dst_cset is the destination cset the</span></span><br><span class="line"><span class="comment">	 * target tasks on this cset should be migrated to.  Protected by</span></span><br><span class="line"><span class="comment">	 * cgroup_mutex.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">mg_src_cgrp</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">css_set</span> *<span class="title">mg_dst_cset</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * On the default hierarhcy, -&gt;subsys[ssid] may point to a css</span></span><br><span class="line"><span class="comment">	 * attached to an ancestor instead of the cgroup this css_set is</span></span><br><span class="line"><span class="comment">	 * associated with.  The following node is anchored at</span></span><br><span class="line"><span class="comment">	 * -&gt;subsys[ssid]-&gt;cgroup-&gt;e_csets[ssid] and provides a way to</span></span><br><span class="line"><span class="comment">	 * iterate through all css's attached to a given cgroup.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">e_cset_node</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* all css_task_iters currently walking this cset */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">task_iters</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* dead and being drained, ignore for migration */</span></span><br><span class="line">	<span class="keyword">bool</span> dead;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* For RCU-protected deletion */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">rcu_head</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Per-subsystem/per-cgroup state maintained by the system.  This is the</span></span><br><span class="line"><span class="comment"> * fundamental structural building block that controllers deal with.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Fields marked with "PI:" are public and immutable and may be accessed</span></span><br><span class="line"><span class="comment"> * directly without synchronization.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> &#123;</span></span><br><span class="line">	<span class="comment">/* PI: the cgroup that this css is attached to */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">cgroup</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* PI: the cgroup subsystem that this css is attached to */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys</span> *<span class="title">ss</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* reference count - access via css_[try]get() and css_put() */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">percpu_ref</span> <span class="title">refcnt</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* PI: the parent css */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *<span class="title">parent</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* siblings list anchored at the parent's -&gt;children */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * PI: Subsys-unique ID.  0 is unused and root is always 1.  The</span></span><br><span class="line"><span class="comment">	 * matching css can be looked up using css_from_id().</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">int</span> id;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> flags;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Monotonically increasing unique serial number which defines a</span></span><br><span class="line"><span class="comment">	 * uniform order among all csses.  It's guaranteed that all</span></span><br><span class="line"><span class="comment">	 * -&gt;children lists are in the ascending order of -&gt;serial_nr and</span></span><br><span class="line"><span class="comment">	 * used to allow interrupting and resuming iterations.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	u64 serial_nr;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Incremented by online self and children.  Used to guarantee that</span></span><br><span class="line"><span class="comment">	 * parents are not offlined before their children.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">atomic_t</span> online_cnt;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* percpu_ref killing and RCU release */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">rcu_head</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> <span class="title">destroy_work</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Control Group subsystem type.</span></span><br><span class="line"><span class="comment"> * See Documentation/cgroups/cgroups.txt for details</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> *(*<span class="title">css_alloc</span>)(<span class="title">struct</span> <span class="title">cgroup_subsys_state</span> *<span class="title">parent_css</span>);</span></span><br><span class="line">	<span class="keyword">int</span> (*css_online)(struct cgroup_subsys_state *css);</span><br><span class="line">	<span class="keyword">void</span> (*css_offline)(struct cgroup_subsys_state *css);</span><br><span class="line">	<span class="keyword">void</span> (*css_released)(struct cgroup_subsys_state *css);</span><br><span class="line">	<span class="keyword">void</span> (*css_free)(struct cgroup_subsys_state *css);</span><br><span class="line">	<span class="keyword">void</span> (*css_reset)(struct cgroup_subsys_state *css);</span><br><span class="line">	<span class="keyword">void</span> (*css_e_css_changed)(struct cgroup_subsys_state *css);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> (*can_attach)(struct cgroup_taskset *tset);</span><br><span class="line">	<span class="keyword">void</span> (*cancel_attach)(struct cgroup_taskset *tset);</span><br><span class="line">	<span class="keyword">void</span> (*attach)(struct cgroup_taskset *tset);</span><br><span class="line">	<span class="keyword">void</span> (*post_attach)(<span class="keyword">void</span>);</span><br><span class="line">	<span class="keyword">int</span> (*can_fork)(struct task_struct *task, <span class="keyword">void</span> **priv_p);</span><br><span class="line">	<span class="keyword">void</span> (*cancel_fork)(struct task_struct *task, <span class="keyword">void</span> *priv);</span><br><span class="line">	<span class="keyword">void</span> (*fork)(struct task_struct *task, <span class="keyword">void</span> *priv);</span><br><span class="line">	<span class="keyword">void</span> (*<span class="built_in">exit</span>)(struct task_struct *task);</span><br><span class="line">	<span class="keyword">void</span> (*<span class="built_in">free</span>)(struct task_struct *task);</span><br><span class="line">	<span class="keyword">void</span> (*bind)(struct cgroup_subsys_state *root_css);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> early_init;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * If %false, this subsystem is properly hierarchical -</span></span><br><span class="line"><span class="comment">	 * configuration, resource accounting and restriction on a parent</span></span><br><span class="line"><span class="comment">	 * cgroup cover those of its children.  If %true, hierarchy support</span></span><br><span class="line"><span class="comment">	 * is broken in some ways - some subsystems ignore hierarchy</span></span><br><span class="line"><span class="comment">	 * completely while others are only implemented half-way.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * It's now disallowed to create nested cgroups if the subsystem is</span></span><br><span class="line"><span class="comment">	 * broken and cgroup core will emit a warning message on such</span></span><br><span class="line"><span class="comment">	 * cases.  Eventually, all subsystems will be made properly</span></span><br><span class="line"><span class="comment">	 * hierarchical and this will go away.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">bool</span> broken_hierarchy;</span><br><span class="line">	<span class="keyword">bool</span> warned_broken_hierarchy;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* the following two fields are initialized automtically during boot */</span></span><br><span class="line">	<span class="keyword">int</span> id;</span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* optional, initialized automatically during boot if not set */</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *legacy_name;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* link to parent, protected by cgroup_lock() */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_root</span> *<span class="title">root</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* idr for css-&gt;id */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">idr</span> <span class="title">css_idr</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * List of cftypes.  Each entry is the first entry of an array</span></span><br><span class="line"><span class="comment">	 * terminated by zero length name.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">cfts</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Base cftypes which are automatically registered.  The two can</span></span><br><span class="line"><span class="comment">	 * point to the same array.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cftype</span> *<span class="title">dfl_cftypes</span>;</span>	<span class="comment">/* for the default hierarchy */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cftype</span> *<span class="title">legacy_cftypes</span>;</span>	<span class="comment">/* for the legacy hierarchies */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * A subsystem may depend on other subsystems.  When such subsystem</span></span><br><span class="line"><span class="comment">	 * is enabled on a cgroup, the depended-upon subsystems are enabled</span></span><br><span class="line"><span class="comment">	 * together if available.  Subsystems enabled due to dependency are</span></span><br><span class="line"><span class="comment">	 * not visible to userland until explicitly enabled.  The following</span></span><br><span class="line"><span class="comment">	 * specifies the mask of subsystems that this one depends on.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> depends_on;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> &#123;</span></span><br><span class="line">	<span class="comment">/* self css with NULL -&gt;ss, points back to this cgroup */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> <span class="title">self</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> flags;		<span class="comment">/* "unsigned long" so bitops work */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * idr allocated in-hierarchy ID.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * ID 0 is not used, the ID of the root cgroup is always 1, and a</span></span><br><span class="line"><span class="comment">	 * new cgroup will be assigned with a smallest available ID.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * Allocating/Removing ID must be protected by cgroup_mutex.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">int</span> id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Each non-empty css_set associated with this cgroup contributes</span></span><br><span class="line"><span class="comment">	 * one to populated_cnt.  All children with non-zero popuplated_cnt</span></span><br><span class="line"><span class="comment">	 * of their own contribute one.  The count is zero iff there's no</span></span><br><span class="line"><span class="comment">	 * task in this cgroup or its subtree.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">int</span> populated_cnt;</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kernfs_node</span> *<span class="title">kn</span>;</span>		<span class="comment">/* cgroup kernfs entry */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_file</span> <span class="title">procs_file</span>;</span>	<span class="comment">/* handle for "cgroup.procs" */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_file</span> <span class="title">events_file</span>;</span>	<span class="comment">/* handle for "cgroup.events" */</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * The bitmask of subsystems enabled on the child cgroups.</span></span><br><span class="line"><span class="comment">	 * -&gt;subtree_control is the one configured through</span></span><br><span class="line"><span class="comment">	 * "cgroup.subtree_control" while -&gt;child_subsys_mask is the</span></span><br><span class="line"><span class="comment">	 * effective one which may have more subsystems enabled.</span></span><br><span class="line"><span class="comment">	 * Controller knobs are made available iff it's enabled in</span></span><br><span class="line"><span class="comment">	 * -&gt;subtree_control.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> subtree_control;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> child_subsys_mask;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Private pointers for each registered subsystem */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> __<span class="title">rcu</span> *<span class="title">subsys</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_root</span> *<span class="title">root</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * List of cgrp_cset_links pointing at css_sets with tasks in this</span></span><br><span class="line"><span class="comment">	 * cgroup.  Protected by css_set_lock.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">cset_links</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * On the default hierarchy, a css_set for a cgroup with some</span></span><br><span class="line"><span class="comment">	 * susbsys disabled will point to css's which are associated with</span></span><br><span class="line"><span class="comment">	 * the closest ancestor which has the subsys enabled.  The</span></span><br><span class="line"><span class="comment">	 * following lists all css_sets which point to this cgroup's css</span></span><br><span class="line"><span class="comment">	 * for the given subsystem.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">e_csets</span>[<span class="title">CGROUP_SUBSYS_COUNT</span>];</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * list of pidlists, up to two for each namespace (one for procs, one</span></span><br><span class="line"><span class="comment">	 * for tasks); created on demand.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">pidlists</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mutex</span> <span class="title">pidlist_mutex</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* used to wait for offlining of csses */</span></span><br><span class="line">	<span class="keyword">wait_queue_head_t</span> offline_waitq;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* used to schedule release agent */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">work_struct</span> <span class="title">release_agent_work</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* task group related information */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_group</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> <span class="title">css</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FAIR_GROUP_SCHED</span></span><br><span class="line">	<span class="comment">/* schedulable entities of this group on each cpu */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> **<span class="title">se</span>;</span></span><br><span class="line">	<span class="comment">/* runqueue "owned" by this group on each cpu */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cfs_rq</span> **<span class="title">cfs_rq</span>;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> shares;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span>	CONFIG_SMP</span></span><br><span class="line">	<span class="keyword">atomic_long_t</span> load_avg;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_RT_GROUP_SCHED</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sched_rt_entity</span> **<span class="title">rt_se</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rt_rq</span> **<span class="title">rt_rq</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rt_bandwidth</span> <span class="title">rt_bandwidth</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span> <span class="title">rcu</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_group</span> *<span class="title">parent</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">siblings</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SCHED_AUTOGROUP</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">autogroup</span> *<span class="title">autogroup</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cfs_bandwidth</span> <span class="title">cfs_bandwidth</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">cgroup_subsys_state</span> &#123;</span></span><br><span class="line">    <span class="comment">/*  </span></span><br><span class="line"><span class="comment">     * The cgroup that this subsystem is attached to. Useful</span></span><br><span class="line"><span class="comment">     * for subsystems that want to know about the cgroup</span></span><br><span class="line"><span class="comment">     * hierarchy structure</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">cgroup</span> *<span class="title">cgroup</span>;</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">/*  </span></span><br><span class="line"><span class="comment">     * State maintained by the cgroup system to allow subsystems</span></span><br><span class="line"><span class="comment">     * to be "busy". Should be accessed via css_get(),</span></span><br><span class="line"><span class="comment">     * css_tryget() and and css_put().</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">atomic_t</span> refcnt;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> flags;</span><br><span class="line">    <span class="comment">/* ID for this css, if possible */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">css_id</span> __<span class="title">rcu</span> *<span class="title">id</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">load_weight</span>	<span class="title">load</span>;</span>		<span class="comment">/* for load-balancing */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span>		<span class="title">run_node</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>	<span class="title">group_node</span>;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span>		on_rq;</span><br><span class="line"></span><br><span class="line">	u64			exec_start;</span><br><span class="line">	u64			sum_exec_runtime;</span><br><span class="line">	u64			vruntime;</span><br><span class="line">	u64			prev_sum_exec_runtime;</span><br><span class="line"></span><br><span class="line">	u64			nr_migrations;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_SCHEDSTATS</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sched_statistics</span> <span class="title">statistics</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FAIR_GROUP_SCHED</span></span><br><span class="line"><span class="comment">//当前调度单元归属于某个父调度单元</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sched_entity</span>	*<span class="title">parent</span>;</span></span><br><span class="line">	<span class="comment">/* rq on which this entity is (to be) queued: */</span></span><br><span class="line"><span class="comment">//当前调度单元归属的父调度单元的调度队列，即当前调度单元插入的队列</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cfs_rq</span>		*<span class="title">cfs_rq</span>;</span></span><br><span class="line">	<span class="comment">/* rq "owned" by this entity/group: */</span></span><br><span class="line"><span class="comment">//当前调度单元的调度队列，即管理子调度单元的队列，如果调度单元是task_group，my_q才会有值</span></span><br><span class="line"><span class="comment">//如果当前调度单元是task，那么my_q自然为NULL</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">cfs_rq</span>		*<span class="title">my_q</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">void</span> *suse_kabi_padding;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://ggaaooppeenngg.github.io/zh-CN/2017/05/07/cgroups-%E5%88%86%E6%9E%90%E4%B9%8B%E5%86%85%E5%AD%98%E5%92%8CCPU/" target="_blank" rel="noopener">https://ggaaooppeenngg.github.io/zh-CN/2017/05/07/cgroups-%E5%88%86%E6%9E%90%E4%B9%8B%E5%86%85%E5%AD%98%E5%92%8CCPU/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1565,7 +1568,7 @@ struct list_head children;</code></pre><p>#ifdef CONFIG_SCHED_AUTOGROUP<br>    s
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-count">81</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

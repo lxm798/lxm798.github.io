@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="事务特征ACID原子性一致性独立性持久性 事务的实现redo log参数redo log有没有commit记录?double writeredo log不是提交时才有?什么时候有呢?什么数据里面包含事务提交信息? undo log逻辑记录 应为有多个事务在同时处理,之前的数据可能已经不在原来的位置 binlog二进制日志，逻辑日志，分为STATEMENT和ROW模式 隔离级别READ UNCOMM">
+<meta name="description" content="https://www.codercto.com/a/36351.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="事务">
-<meta property="og:url" content="http://yoursite.com/2019/10/04/mysql/事务/index.html">
+<meta property="og:title" content="transaction">
+<meta property="og:url" content="http://yoursite.com/2019/10/04/kafka/transaction/index.html">
 <meta property="og:site_name" content="lxm798">
-<meta property="og:description" content="事务特征ACID原子性一致性独立性持久性 事务的实现redo log参数redo log有没有commit记录?double writeredo log不是提交时才有?什么时候有呢?什么数据里面包含事务提交信息? undo log逻辑记录 应为有多个事务在同时处理,之前的数据可能已经不在原来的位置 binlog二进制日志，逻辑日志，分为STATEMENT和ROW模式 隔离级别READ UNCOMM">
+<meta property="og:description" content="https://www.codercto.com/a/36351.html">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-04T03:22:31.637Z">
+<meta property="og:updated_time" content="2019-10-04T03:22:31.557Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="事务">
-<meta name="twitter:description" content="事务特征ACID原子性一致性独立性持久性 事务的实现redo log参数redo log有没有commit记录?double writeredo log不是提交时才有?什么时候有呢?什么数据里面包含事务提交信息? undo log逻辑记录 应为有多个事务在同时处理,之前的数据可能已经不在原来的位置 binlog二进制日志，逻辑日志，分为STATEMENT和ROW模式 隔离级别READ UNCOMM">
+<meta name="twitter:title" content="transaction">
+<meta name="twitter:description" content="https://www.codercto.com/a/36351.html">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/10/04/mysql/事务/">
+  <link rel="canonical" href="http://yoursite.com/2019/10/04/kafka/transaction/">
 
 
 
 
 
-  <title>事务 | lxm798</title>
+  <title>transaction | lxm798</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/mysql/事务/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/kafka/transaction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">事务</h1>
+          <h1 class="post-title" itemprop="name headline">transaction</h1>
         
 
         <div class="post-meta">
@@ -299,14 +299,7 @@
       
 
       
-        <h1 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h1><h2 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h2><p>ACID<br>原子性<br>一致性<br>独立性<br>持久性</p>
-<h2 id="事务的实现"><a href="#事务的实现" class="headerlink" title="事务的实现"></a>事务的实现</h2><h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>参数<br>redo log有没有commit记录?<br>double write<br>redo log不是提交时才有?什么时候有呢?<br>什么数据里面包含事务提交信息?</p>
-<h3 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h3><p>逻辑记录 应为有多个事务在同时处理,之前的数据可能已经不在原来的位置</p>
-<h3 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h3><p>二进制日志，逻辑日志，分为STATEMENT和ROW模式</p>
-<h3 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h3><p>READ UNCOMMIT<br>READ COMMMIT<br>READ REAPEAT<br>Serial</p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>LOG Group Commit</p>
-<h3 id="2PC"><a href="#2PC" class="headerlink" title="2PC"></a>2PC</h3><h3 id="相关选项"><a href="#相关选项" class="headerlink" title="相关选项"></a>相关选项</h3><p>redolog 提交选项:</p>
-<h3 id="业务优化"><a href="#业务优化" class="headerlink" title="业务优化"></a>业务优化</h3><p>长事务</p>
+        <p><a href="https://www.codercto.com/a/36351.html" target="_blank" rel="noopener">https://www.codercto.com/a/36351.html</a></p>
 
       
     </div>
@@ -331,8 +324,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/04/mysql/mysql 和innodb读写数据流程/" rel="next" title>
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2019/10/04/java/tomcat/StandardContext/" rel="next" title="StandardContext">
+                <i class="fa fa-chevron-left"></i> StandardContext
               </a>
             
           </div>
@@ -341,8 +334,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/10/04/mysql/算法与索引/" rel="prev" title="算法与索引">
-                算法与索引 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/10/04/linux/cgroup/cfs/" rel="prev" title="cfs">
+                cfs <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -395,17 +388,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -447,22 +431,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#事务"><span class="nav-number">1.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#特征"><span class="nav-number">1.1.</span> <span class="nav-text">特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务的实现"><span class="nav-number">1.2.</span> <span class="nav-text">事务的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#redo-log"><span class="nav-number">1.2.1.</span> <span class="nav-text">redo log</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undo-log"><span class="nav-number">1.2.2.</span> <span class="nav-text">undo log</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#binlog"><span class="nav-number">1.2.3.</span> <span class="nav-text">binlog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#隔离级别"><span class="nav-number">1.2.4.</span> <span class="nav-text">隔离级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">1.2.5.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2PC"><span class="nav-number">1.2.6.</span> <span class="nav-text">2PC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关选项"><span class="nav-number">1.2.7.</span> <span class="nav-text">相关选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#业务优化"><span class="nav-number">1.2.8.</span> <span class="nav-text">业务优化</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       

@@ -229,149 +229,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/devops/mesos/mesos源码分析1-结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxm798">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/devops/mesos/mesos源码分析1-结构/" itemprop="url">.mesos源码分析1-结构</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Mesos-源码分析–快速入门"><a href="#Mesos-源码分析–快速入门" class="headerlink" title="Mesos 源码分析–快速入门"></a>Mesos 源码分析–快速入门</h1><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><img src="./pic/architecture3.jpg" width="500" height="300">
-mesos 由scheduler,master,agent和exeuctor组成.其中master管理在每个node中的gagent,资源由master负责分配,每份资源由类似(agent ID, resource1: amount1, resource2: amount2,...)结构描述.
-
-<h2 id="资源分配示例"><a href="#资源分配示例" class="headerlink" title="资源分配示例"></a>资源分配示例</h2><img src="./pic/architecture-example.jpg" width="400" height="300">
-
-<ol>
-<li>Agent1 上报给master其包含(4 CPUS,4GB MEM)</li>
-<li>master 按照资源分配算法分配资源</li>
-<li>schdueler 回复master使用哪些资源运行task</li>
-<li>master将task分发给agent</li>
-</ol>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>以ubuntu16.04为例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">git clone git@github.com:apache/mesos.git</span><br><span class="line">cd mesos</span><br><span class="line">sudo apt-get install -y openjdk-8-jdk</span><br><span class="line">sudo apt-get install -y autoconf libtool</span><br><span class="line">sudo apt-get -y install build-essential python-dev python-six python-virtualenv libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev iputils-ping</span><br><span class="line">./bootstrap</span><br><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">../configure</span><br><span class="line">make -j 4</span><br><span class="line">make check</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./bin/mesos-master.sh --ip=127.0.0.1 --work_dir=/var/lib/mesos</span><br><span class="line">./bin/mesos-agent.sh --master=127.0.0.1:5050 --work_dir=/var/lib/mesos</span><br><span class="line">./src/examples/java/test-framework 127.0.0.1:5050</span><br></pre></td></tr></table></figure>
-
-<h2 id="编译产出"><a href="#编译产出" class="headerlink" title="编译产出"></a>编译产出</h2><p> 编译后在build目录下会有多个文件:</p>
-<ul>
-<li>mesos : shell 脚本,用于启动master,agent</li>
-<li>mesos-master.sh : shell脚本启动master</li>
-<li>mesos-agent.sh : 用于启动agent</li>
-<li>mesos-execute : mesos的cli,作为mesos的framework运行</li>
-<li>mesos-executor : mesos executor task的默认executor</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/devops/kebernetes/first try/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -391,7 +248,7 @@ mesos 由scheduler,master,agent和exeuctor组成.其中master管理在每个node
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/devops/kebernetes/first try/" itemprop="url">.first?try</a></h1>
+                <a class="post-title-link" href="/2019/10/04/devops/kebernetes/first try/" itemprop="url">first?try</a></h1>
         
 
         <div class="post-meta">
@@ -403,7 +260,7 @@ mesos 由scheduler,master,agent和exeuctor组成.其中master管理在每个node
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -568,7 +425,7 @@ mesos 由scheduler,master,agent和exeuctor组成.其中master管理在每个node
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-count">81</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

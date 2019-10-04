@@ -248,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/tomcat/Catalina & BootStrap/" itemprop="url">.Catalina?&?BootStrap</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/tomcat/Catalina & BootStrap/" itemprop="url">Catalina?&?BootStrap</a></h1>
         
 
         <div class="post-meta">
@@ -260,7 +260,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -353,126 +353,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/java/tomcat/config/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxm798">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/10/04/java/tomcat/config/" itemprop="url">.config</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
-                2019-10-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>#<br>##</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (debug &gt; <span class="number">0</span>)</span><br><span class="line">        log(sm.getString(<span class="string">"contextConfig.start"</span>));</span><br><span class="line">    context.setConfigured(<span class="keyword">false</span>);</span><br><span class="line">    ok = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set properties based on DefaultContext</span></span><br><span class="line">    Container container = context.getParent();</span><br><span class="line">    <span class="keyword">if</span>( !context.getOverride() ) &#123;</span><br><span class="line">        <span class="keyword">if</span>( container <span class="keyword">instanceof</span> Host ) &#123;</span><br><span class="line">            ((Host)container).importDefaultContext(context);</span><br><span class="line">            container = container.getParent();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>( container <span class="keyword">instanceof</span> Engine ) &#123;</span><br><span class="line">            ((Engine)container).importDefaultContext(context);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Process the default and application web.xml files</span></span><br><span class="line">    defaultConfig();</span><br><span class="line">    applicationConfig();</span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        validateSecurityRoles();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Scan tag library descriptor files for additional listener classes</span></span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            tldScan();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log(e.getMessage(), e);</span><br><span class="line">            ok = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Configure a certificates exposer valve, if required</span></span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">        certificatesConfig();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Configure an authenticator if we need one</span></span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">        authenticatorConfig();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Dump the contents of this pipeline if requested</span></span><br><span class="line">    <span class="keyword">if</span> ((debug &gt;= <span class="number">1</span>) &amp;&amp; (context <span class="keyword">instanceof</span> ContainerBase)) &#123;</span><br><span class="line">        log(<span class="string">"Pipline Configuration:"</span>);</span><br><span class="line">        Pipeline pipeline = ((ContainerBase) context).getPipeline();</span><br><span class="line">        Valve valves[] = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (pipeline != <span class="keyword">null</span>)</span><br><span class="line">            valves = pipeline.getValves();</span><br><span class="line">        <span class="keyword">if</span> (valves != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; valves.length; i++) &#123;</span><br><span class="line">                log(<span class="string">"  "</span> + valves[i].getInfo());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        log(<span class="string">"======================"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make our application available if no problems were encountered</span></span><br><span class="line">    <span class="keyword">if</span> (ok)</span><br><span class="line">        context.setConfigured(<span class="keyword">true</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        log(sm.getString(<span class="string">"contextConfig.unavailable"</span>));</span><br><span class="line">        context.setConfigured(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/java/nio/nio/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -492,7 +372,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/nio/nio/" itemprop="url">.nio</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/nio/nio/" itemprop="url">nio</a></h1>
         
 
         <div class="post-meta">
@@ -504,7 +384,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -623,7 +503,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/mybatis/objectfactory/" itemprop="url">.objectfactory</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/mybatis/objectfactory/" itemprop="url">objectfactory</a></h1>
         
 
         <div class="post-meta">
@@ -635,7 +515,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -743,7 +623,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/ThreadPoolExecutor/" itemprop="url">.ThreadPoolExecutor</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/ThreadPoolExecutor/" itemprop="url">ThreadPoolExecutor</a></h1>
         
 
         <div class="post-meta">
@@ -755,7 +635,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -894,7 +774,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/threadlocal/" itemprop="url">.threadlocal</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/threadlocal/" itemprop="url">threadlocal</a></h1>
         
 
         <div class="post-meta">
@@ -906,7 +786,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1016,7 +896,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/stringbuffer-stringbuilder/" itemprop="url">.stringbuffer-stringbuilder</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/stringbuffer-stringbuilder/" itemprop="url">stringbuffer-stringbuilder</a></h1>
         
 
         <div class="post-meta">
@@ -1028,7 +908,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1140,7 +1020,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/hashmap-hashtab/" itemprop="url">.hashmap-hashtab</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/hashmap-hashtab/" itemprop="url">hashmap-hashtab</a></h1>
         
 
         <div class="post-meta">
@@ -1152,7 +1032,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1281,7 +1161,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/concurrenthashmap/" itemprop="url">.concurrenthashmap</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/concurrenthashmap/" itemprop="url">concurrenthashmap</a></h1>
         
 
         <div class="post-meta">
@@ -1293,7 +1173,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1406,7 +1286,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/10/04/java/juc/blockqueue/" itemprop="url">.blockqueue</a></h1>
+                <a class="post-title-link" href="/2019/10/04/java/juc/blockqueue/" itemprop="url">blockqueue</a></h1>
         
 
         <div class="post-meta">
@@ -1418,7 +1298,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:15+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -1534,6 +1414,133 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/04/index/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxm798">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/04/index/" itemprop="url">index</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
+                2019-10-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Welcome-to-GitHub-Pages"><a href="#Welcome-to-GitHub-Pages" class="headerlink" title="Welcome to GitHub Pages"></a>Welcome to GitHub Pages</h2><p>You can use the <a href="https://github.com/lxm798/lxm798.github.io/edit/master/index.md" target="_blank" rel="noopener">editor on GitHub</a> to maintain and preview the content for your website in Markdown files.</p>
+<p>Whenever you commit to this repository, GitHub Pages will run <a href="https://jekyllrb.com/" target="_blank" rel="noopener">Jekyll</a> to rebuild the pages in your site, from the content in your Markdown files.</p>
+<h3 id="Markdown"><a href="#Markdown" class="headerlink" title="Markdown"></a>Markdown</h3><p>Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Syntax highlighted code block</span><br><span class="line"></span><br><span class="line"><span class="section"># Header 1</span></span><br><span class="line"><span class="section">## Header 2</span></span><br><span class="line"><span class="section">### Header 3</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">- </span>Bulleted</span><br><span class="line"><span class="bullet">- </span>List</span><br><span class="line"></span><br><span class="line"><span class="bullet">1. </span>Numbered</span><br><span class="line"><span class="bullet">2. </span>List</span><br><span class="line"></span><br><span class="line"><span class="strong">**Bold**</span> and <span class="emphasis">_Italic_</span> and <span class="code">`Code`</span> text</span><br><span class="line"></span><br><span class="line">[<span class="string">Link</span>](<span class="link">url</span>) and ![<span class="string">Image</span>](<span class="link">src</span>)</span><br></pre></td></tr></table></figure>
+
+<p>For more details see <a href="https://guides.github.com/features/mastering-markdown/" target="_blank" rel="noopener">GitHub Flavored Markdown</a>.</p>
+<h3 id="Jekyll-Themes"><a href="#Jekyll-Themes" class="headerlink" title="Jekyll Themes"></a>Jekyll Themes</h3><p>Your Pages site will use the layout and styles from the Jekyll theme you have selected in your <a href="https://github.com/lxm798/lxm798.github.io/settings" target="_blank" rel="noopener">repository settings</a>. The name of this theme is saved in the Jekyll <code>_config.yml</code> configuration file.</p>
+<h3 id="Support-or-Contact"><a href="#Support-or-Contact" class="headerlink" title="Support or Contact"></a>Support or Contact</h3><p>Having trouble with Pages? Check out our <a href="https://help.github.com/categories/github-pages-basics/" target="_blank" rel="noopener">documentation</a> or <a href="https://github.com/contact" target="_blank" rel="noopener">contact support</a> and we’ll help you sort it out.</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1584,7 +1591,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-count">81</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

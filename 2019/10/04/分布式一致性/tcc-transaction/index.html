@@ -81,14 +81,14 @@
 
 <meta name="description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
 <meta property="og:type" content="article">
-<meta property="og:title" content=".tcc-transaction">
+<meta property="og:title" content="tcc-transaction">
 <meta property="og:url" content="http://yoursite.com/2019/10/04/分布式一致性/tcc-transaction/index.html">
 <meta property="og:site_name" content="lxm798">
 <meta property="og:description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-10-04T03:11:16.269Z">
+<meta property="og:updated_time" content="2019-10-04T03:22:31.765Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content=".tcc-transaction">
+<meta name="twitter:title" content="tcc-transaction">
 <meta name="twitter:description" content="tcc-transaction 源码分析总揽tcc 的方案使用TM管理事务,root事务管理分支事务.在root事务达到confirming状态后就相当于事务已经完成.tcc 包含try/commit/cancel三个步骤. 但不是仅仅是这个步骤.例如AP 崩溃的情况,需要处理悬空事务.悬空事务的处理是由TM首先写入本地日志,来记录ROOT事务,同时每次分支事务都需要记录本地日志.通过定时任务扫描">
 
 
@@ -125,7 +125,7 @@
 
 
 
-  <title>.tcc-transaction | lxm798</title>
+  <title>tcc-transaction | lxm798</title>
   
 
 
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">.tcc-transaction</h1>
+          <h1 class="post-title" itemprop="name headline">tcc-transaction</h1>
         
 
         <div class="post-meta">
@@ -261,7 +261,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:11:16+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-04T11:22:31+08:00">
                 2019-10-04
               </time>
             
@@ -334,8 +334,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/04/分布式一致性/redis和mysql一致性/" rel="next" title=".redis和mysql一致性">
-                <i class="fa fa-chevron-left"></i> .redis和mysql一致性
+              <a href="/2019/10/04/分布式一致性/redis和mysql一致性/" rel="next" title="redis和mysql一致性">
+                <i class="fa fa-chevron-left"></i> redis和mysql一致性
               </a>
             
           </div>
@@ -344,8 +344,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/10/04/分布式一致性/分布式一致性/" rel="prev" title=".分布式一致性">
-                .分布式一致性 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/10/04/分布式一致性/分布式一致性/" rel="prev" title="分布式一致性">
+                分布式一致性 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -423,7 +423,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-count">81</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
